@@ -1,0 +1,16 @@
+export type NombreIcono =
+  | 'angular'
+  | 'go'
+  | 'nodejs'
+  | 'chat'
+  | 'bun'
+  | 'tailwind'
+  | 'css'
+  | 'html'
+  | 'javascript'
+  | 'kotlin'
+  | 'flutter'
+  | 'instagram'
+  | 'github'
+  | 'linkedin'
+  | 'verificado';

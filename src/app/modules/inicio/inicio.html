@@ -1,0 +1,99 @@
+<section class="hero">
+  <app-lineas-velocidad />
+  <div class="wrap">
+    <h1>Tecnología a la medida que <span>sí se usa</span> todos los días.</h1>
+    <p>
+      Landing pages, software a la medida, apps móviles, agentes de llamadas, tiendas online y punto
+      de venta: diseñamos, construimos y mantenemos las herramientas digitales que tu negocio
+      necesita.
+    </p>
+    <dl class="stats">
+      <div><dt>proyectos en operación</dt><dd>{{ totalProyectos() }}</dd></div>
+      <div><dt>usuarios registrados en nuestros sistemas</dt><dd>{{ totalUsuarios() }}</dd></div>
+      <div><dt>en operación continua</dt><dd>Desde {{ desdeAnio() }}</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="servicios">
+  <div class="wrap">
+    <h2>Servicios</h2>
+    <p class="lead">Desde una página para presentarte hasta el sistema que sostiene tu operación.</p>
+    <div class="grid">
+      @for (srv of servicios(); track srv.id) {
+        <article class="servicio">
+          <h3>{{ srv.nombre }}</h3>
+          <p>{{ srv.descripcion }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section id="proyectos">
+  <div class="wrap">
+    <h2>Proyectos en producción</h2>
+    <p class="lead">
+      Sistemas reales, con usuarios reales, que ya forman parte del día a día de sus equipos.
+    </p>
+    <div class="grid">
+      @for (p of proyectos(); track p.id) {
+        <app-proyecto-card [proyecto]="p" />
+      }
+    </div>
+  </div>
+</section>
+
+<section id="tecnologias">
+  <div class="wrap">
+    <h2>Stack de tecnologías</h2>
+    <p class="lead">Con qué construimos: elegimos la herramienta según lo que cada proyecto necesita.</p>
+    <ul class="tecnologias">
+      @for (t of tecnologias(); track t.nombre) {
+        <li><app-tecnologia [tecnologia]="t" /></li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section id="quienes-somos">
+  <div class="wrap">
+    <h2>Quiénes somos</h2>
+    <p class="lead">
+      omitl software surge de una idea de Luis Ramírez Durán, su fundador. Hoy trabaja junto a
+      colaboradores profesionales que crean aplicaciones a la medida, cada uno en su especialidad.
+    </p>
+    <div class="grid">
+      @for (p of personas(); track p.nombre) {
+        <app-persona-card [persona]="p" />
+      }
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2>Cómo trabajamos</h2>
+    <p class="lead">Un proceso corto, con entregas que puedes usar desde las primeras semanas.</p>
+    <ol class="steps">
+      @for (paso of pasos; track paso.titulo) {
+        <li>
+          <b>{{ paso.titulo }}</b>
+          {{ paso.texto }}
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="wrap">
+    <h2>¿Tienes un proceso que hoy vive en hojas de cálculo?</h2>
+    <p class="lead">Cuéntanos qué necesitas y te respondemos con una propuesta clara.</p>
+    <p class="accion">
+      <app-boton [href]="'mailto:' + email + '?subject=Proyecto%20de%20software'" variante="jade">
+        {{ email }}
+      </app-boton>
+    </p>
+  </div>
+</section>

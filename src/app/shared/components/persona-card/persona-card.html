@@ -1,0 +1,11 @@
+<article [class.con-foto]="persona().foto" [style.background-image]="fondo()">
+  @if (!persona().foto) {
+    <app-icono class="verificado" nombre="verificado" />
+  }
+  <div>
+    <h3>{{ persona().nombre }}</h3>
+    <p class="rol">{{ persona().rol }}</p>
+    <p>{{ persona().descripcion }}</p>
+    <app-redes-sociales [redes]="persona().redes" />
+  </div>
+</article>

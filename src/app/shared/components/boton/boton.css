@@ -1,0 +1,32 @@
+a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+}
+
+.amarillo { background: var(--yellow); color: var(--night); }
+.jade { background: var(--jade); color: #fff; padding: 0.8rem 1.4rem; }
+
+.icono { display: inline-flex; }
+
+.flota {
+  font-size: 1.5rem;        /* ícono más grande que el texto */
+  margin-block: -0.4rem;    /* sin agrandar el botón */
+  animation: llega 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+/* Entra volando desde fuera y se acomoda. Después ya no hay movimiento propio: solo reacciona al
+   scroll (ver boton.ts). */
+@keyframes llega {
+  from { opacity: 0; transform: translate(-180px, 90px) rotate(-40deg) scale(0.3); }
+  70% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flota { animation: none; }
+}

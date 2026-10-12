@@ -1,0 +1,19 @@
+:host { display: inline-flex; gap: 0.6rem; }
+
+a,
+.off {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: inherit;
+  font-size: 1.1rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.off { opacity: 0.35; cursor: default; }
+
+a:hover { background: var(--yellow); border-color: var(--yellow); color: var(--night); }

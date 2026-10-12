@@ -1,0 +1,25 @@
+<article>
+  <app-badge-pixel [semilla]="proyecto().nombre.length">{{ proyecto().etiqueta }}</app-badge-pixel>
+  <h3>{{ proyecto().nombre }}</h3>
+  <p>{{ proyecto().descripcion }}</p>
+
+  <ul class="chips" aria-label="Tecnologías">
+    @for (t of proyecto().stack; track t.nombre) {
+      <li><app-tecnologia [tecnologia]="t" /></li>
+    }
+  </ul>
+
+  <div class="meta">
+    @if (proyecto().usuarios; as usuarios) {
+      <p>
+        <b>{{ usuarios }} usuarios registrados</b> · en operación desde
+        {{ proyecto().desde | mesAnio }}
+      </p>
+    } @else {
+      <p>En línea desde {{ proyecto().desde | mesAnio }}</p>
+    }
+    @for (p of proyecto().equipo; track p.nombre) {
+      <p>{{ p.nombre }} — {{ p.rol }}</p>
+    }
+  </div>
+</article>

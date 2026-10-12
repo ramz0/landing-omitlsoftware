@@ -1,0 +1,86 @@
+section { padding: 4rem 0; }
+
+h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
+.lead { max-width: 60ch; opacity: 0.75; }
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--night);
+  color: var(--lime);
+  padding: 4.5rem 0 5rem;
+  min-height: min(82vh, 680px);
+  display: flex;
+  align-items: center;
+}
+
+/* Foto del escritorio de fondo (AVIF con WebP de respaldo), pegada a la derecha y con los bordes
+   desvanecidos para que se funda con el verde noche. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 0 auto;
+  aspect-ratio: 1 / 1;
+  z-index: -1;
+  background: image-set(url('/hero.avif') type('image/avif'), url('/hero.webp') type('image/webp'))
+    center 75% / auto 150% no-repeat;
+  mask-image: linear-gradient(90deg, transparent, #000 45%), linear-gradient(180deg, transparent, #000 22%);
+  mask-composite: intersect;
+}
+
+.hero .wrap { position: relative; z-index: 1; width: min(1080px, 100% - 2.5rem); }
+
+@media (max-width: 640px) {
+  .hero::before {
+    inset: 0;
+    aspect-ratio: auto;
+    opacity: 0.35;
+    mask-image: none;
+    background-position: 62% center;
+    background-size: auto 112%;
+  }
+}
+.hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1; max-width: 18ch; color: #fff; }
+.hero h1 span { color: var(--yellow); }
+.hero p { margin-top: 1.25rem; max-width: 56ch; font-size: 1.1rem; }
+
+.stats { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-top: 2.5rem; }
+.stats div { display: flex; flex-direction: column-reverse; }
+.stats dd { font-size: 2rem; font-weight: 700; color: var(--yellow); line-height: 1.1; }
+.stats dt { font-size: 0.9rem; }
+
+.grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+}
+
+.band { background: var(--jade); color: #fff; }
+.band .lead { color: var(--lime); opacity: 1; }
+.steps {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  list-style: none;
+  padding: 0;
+}
+.steps li { border-left: 3px solid var(--yellow); padding-left: 1rem; }
+.steps b { display: block; color: var(--yellow); }
+
+.accion { margin-top: 1.5rem; }
+
+.tecnologias { display: flex; flex-wrap: wrap; gap: 0.6rem; list-style: none; padding: 0; margin-top: 2rem; }
+.tecnologias app-tecnologia { font-size: 0.95rem; padding: 0.4rem 0.9rem; border-radius: 10px; }
+
+.servicio {
+  /* Card "hundida": sin borde ni header, el relieve viene de la sombra interna. */
+  background: color-mix(in srgb, var(--stone) 35%, var(--mist));
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow:
+    inset 0 3px 8px rgb(10 41 41 / 0.16),
+    inset 0 -1px 0 rgb(255 255 255 / 0.7);
+}
+.servicio h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }

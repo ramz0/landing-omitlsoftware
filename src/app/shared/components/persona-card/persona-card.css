@@ -1,0 +1,26 @@
+article {
+  height: 100%;
+  display: flex;
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid var(--stone);
+  border-radius: 18px;
+  padding: 1.5rem;
+  background-size: cover;
+  background-position: center top;
+}
+
+/* Con foto: la card es más alta, la foto es el fondo y el texto va abajo sobre un degradado. */
+article.con-foto {
+  min-height: 26rem;
+  align-items: flex-end;
+  border-color: transparent;
+  color: var(--mist);
+}
+.con-foto .rol { color: var(--yellow); }
+
+.verificado { flex: none; font-size: 2.25rem; color: var(--jade); }
+
+h3 { font-size: 1.15rem; }
+.rol { font-size: 0.85rem; font-weight: 600; color: var(--jade); margin-bottom: 0.5rem; }
+app-redes-sociales { margin-top: 1rem; }

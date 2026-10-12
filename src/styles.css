@@ -1,0 +1,24 @@
+:root {
+  --night: #0a2929;
+  --jade: #045453;
+  --yellow: #f3c649;
+  --mist: #f9f6eb;
+  --lime: #f5e8bc;
+  --stone: #e2d6ac;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+
+body {
+  font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--night);
+  background: var(--mist);
+}
+
+.wrap { width: min(1080px, 100% - 2.5rem); margin-inline: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
