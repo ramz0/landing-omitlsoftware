@@ -1,47 +1,21 @@
 :host {
   --fg: var(--jade);
-  position: relative;
+  --p: var(--px);
   display: inline-block;
   vertical-align: middle;
   align-self: flex-start; /* dentro de una columna flex no se estira */
-  height: calc(var(--px) * 9);
-  background: var(--base); /* silueta siempre completa y uniforme */
-  border-radius: 0.6rem;
-  overflow: hidden; /* los píxeles viven dentro del badge, no dejan rastro afuera */
+  box-sizing: border-box;
+  height: calc(var(--p) * 15);
+  line-height: calc(var(--p) * 15);
+  padding: 0 calc(var(--p) * 7);
+  background: var(--base);
+  color: var(--fg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
 }
 
 :host(.jade) { --fg: var(--lime); }
 :host(.amarillo) { --fg: var(--night); }
 :host(.noche) { --fg: var(--lime); }
-
-/* El texto se centra en la zona SÓLIDA (a la derecha de la banda de píxeles): al estar la izquierda
-   deshecha, centrarlo en todo el badge hacía que se viera pegado a ese lado. Va sobre los píxeles. */
-.cuerpo {
-  position: relative;
-  z-index: 1;
-  display: block;
-  height: calc(var(--px) * 9);
-  line-height: calc(var(--px) * 9);
-  padding: 0 0.5rem 0 calc(var(--px) * 4 + 0.5rem);
-  text-align: center;
-  color: var(--fg);
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.px {
-  position: absolute;
-  width: var(--px);
-  height: var(--px);
-  animation: parpadea ease-in-out infinite;
-}
-
-@keyframes parpadea {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .px { animation: none; }
-}
