@@ -71,9 +71,6 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
 
 .accion { margin-top: 1.5rem; }
 
-.tecnologias { display: flex; flex-wrap: wrap; gap: 0.6rem; list-style: none; padding: 0; margin-top: 2rem; }
-.tecnologias app-tecnologia { font-size: 0.95rem; padding: 0.4rem 0.9rem; border-radius: 10px; }
-
 .servicio {
   /* Card "hundida": sin borde ni header, el relieve viene de la sombra interna. */
   background: color-mix(in srgb, var(--stone) 35%, var(--mist));
@@ -84,3 +81,6 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
     inset 0 -1px 0 rgb(255 255 255 / 0.7);
 }
 .servicio h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
+
+/* El teclado del stack sale del .wrap a todo el ancho. */
+#tecnologias { overflow-x: clip; }

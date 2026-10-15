@@ -48,11 +48,7 @@
   <div class="wrap">
     <h2>Stack de tecnologías</h2>
     <p class="lead">Con qué construimos: elegimos la herramienta según lo que cada proyecto necesita.</p>
-    <ul class="tecnologias">
-      @for (t of tecnologias(); track t.nombre) {
-        <li><app-tecnologia [tecnologia]="t" /></li>
-      }
-    </ul>
+    <app-teclado [tecnologias]="tecnologias()" />
   </div>
 </section>
 

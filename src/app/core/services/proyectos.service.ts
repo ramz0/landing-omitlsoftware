@@ -54,16 +54,84 @@ export class ProyectosService {
 
   /** Tecnologías con las que trabajamos (sección "Stack de tecnologías"). */
   readonly tecnologias = signal<Tecnologia[]>([
-    { nombre: 'Angular', icono: 'angular' },
-    { nombre: 'Node.js', icono: 'nodejs' },
-    { nombre: 'Go', icono: 'go' },
-    { nombre: 'Bun', icono: 'bun' },
-    { nombre: 'Tailwind', icono: 'tailwind' },
-    { nombre: 'CSS', icono: 'css' },
-    { nombre: 'HTML', icono: 'html' },
-    { nombre: 'JavaScript', icono: 'javascript' },
-    { nombre: 'Kotlin', icono: 'kotlin' },
-    { nombre: 'Flutter', icono: 'flutter' },
+    {
+      nombre: 'Angular',
+      icono: 'angular',
+      atajo: 'A',
+      uso: 'Interfaces de nuestros sistemas (Mi Paay, The Money Center, Oportunidades Paay): componentes standalone, signals y rutas con carga diferida.',
+    },
+    {
+      nombre: 'Node.js',
+      icono: 'nodejs',
+      atajo: 'N',
+      uso: 'Backend de Mi Paay: API REST, autenticación y la lógica de negocio del sistema.',
+    },
+    {
+      nombre: 'Go',
+      icono: 'go',
+      atajo: 'G',
+      uso: 'APIs del call center y de The Money Center: rápidas, un solo binario y poco consumo en producción.',
+    },
+    {
+      nombre: 'PostgreSQL',
+      icono: 'postgresql',
+      atajo: 'P',
+      uso: 'Base de datos relacional de nuestros sistemas: transacciones, integridad de datos y consultas rápidas bajo carga.',
+    },
+    {
+      nombre: 'GSAP',
+      icono: 'gsap',
+      atajo: 'S',
+      uso: 'Animaciones de interfaz con secuencias y easing precisos, donde CSS puro se queda corto (por ejemplo, el marcador de llamadas).',
+    },
+    {
+      nombre: 'Three.js',
+      icono: 'threejs',
+      atajo: '3',
+      uso: 'Escenas 3D en el navegador: es lo que dibuja este teclado, con luz, sombras y materiales en tiempo real.',
+    },
+    {
+      nombre: 'Bun',
+      icono: 'bun',
+      atajo: 'B',
+      uso: 'Runtime y gestor de paquetes en el desarrollo del front: instala y compila en segundos.',
+    },
+    {
+      nombre: 'Tailwind',
+      icono: 'tailwind',
+      atajo: 'T',
+      uso: 'Estilos utilitarios para prototipar interfaces rápido y mantenerlas consistentes.',
+    },
+    {
+      nombre: 'CSS',
+      icono: 'css',
+      atajo: 'C',
+      uso: 'Diseño responsivo y animaciones propias: grid, variables y transiciones, sin librerías.',
+    },
+    {
+      nombre: 'HTML',
+      icono: 'html',
+      atajo: 'H',
+      uso: 'Maquetado semántico y accesible, base del SEO y del prerender de esta landing.',
+    },
+    {
+      nombre: 'JavaScript',
+      icono: 'javascript',
+      atajo: 'J',
+      uso: 'Lógica en el navegador y scripts de automatización cuando un framework es demasiado.',
+    },
+    {
+      nombre: 'Kotlin',
+      icono: 'kotlin',
+      atajo: 'K',
+      uso: 'Apps móviles nativas para Android cuando se necesita acceso completo al dispositivo.',
+    },
+    {
+      nombre: 'Flutter',
+      icono: 'flutter',
+      atajo: 'F',
+      uso: 'Una sola base de código para apps móviles en Android e iOS.',
+    },
   ]);
 
   readonly totalProyectos = computed(() => this.proyectos().length);

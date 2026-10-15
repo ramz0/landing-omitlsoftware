@@ -1,6 +1,9 @@
 export type NombreIcono =
   | 'angular'
   | 'go'
+  | 'postgresql'
+  | 'gsap'
+  | 'threejs'
   | 'nodejs'
   | 'chat'
   | 'bun'

@@ -4,14 +4,14 @@ import { EquipoService } from '@core/services/equipo.service';
 import { ServiciosService } from '@core/services/servicios.service';
 import { ProyectosService } from '@core/services/proyectos.service';
 import { Boton } from '@shared/components/boton/boton';
-import { TecnologiaChip } from '@shared/components/tecnologia/tecnologia';
+import { Teclado } from '@shared/components/teclado/teclado';
 import { LineasVelocidad } from '@shared/components/lineas-velocidad/lineas-velocidad';
 import { PersonaCard } from '@shared/components/persona-card/persona-card';
 import { ProyectoCard } from '@shared/components/proyecto-card/proyecto-card';
 
 @Component({
   selector: 'app-inicio',
-  imports: [LineasVelocidad, ProyectoCard, TecnologiaChip, PersonaCard, Boton],
+  imports: [LineasVelocidad, ProyectoCard, Teclado, PersonaCard, Boton],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

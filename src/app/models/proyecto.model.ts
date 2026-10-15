@@ -3,6 +3,10 @@ import { NombreIcono } from './icono.model';
 export interface Tecnologia {
   nombre: string;
   icono?: NombreIcono;
+  /** Cómo la usamos; se muestra al presionar su tecla en el teclado del stack. */
+  uso?: string;
+  /** Letra del teclado real que presiona esta tecla (se rotula al frente del keycap). */
+  atajo?: string;
 }
 
 export interface Integrante {
