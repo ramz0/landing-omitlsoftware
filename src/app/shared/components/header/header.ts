@@ -8,9 +8,13 @@ import { Boton } from '@shared/components/boton/boton';
   templateUrl: './header.html',
   styleUrl: './header.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(window:scroll)': 'compacto.set(scrollY > 40)' },
+  host: { '(window:scroll)': 'alScroll()' },
 })
 export class Header {
   /** Con scroll el header se adelgaza. */
   compacto = signal(false);
+
+  alScroll() {
+    this.compacto.set(window.scrollY > 40);
+  }
 }
