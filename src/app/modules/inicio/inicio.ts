@@ -10,7 +10,11 @@ import {
   viewChild,
 } from '@angular/core';
 
+import { HttpClient } from '@angular/common/http';
+
 import gsap from 'gsap';
+
+import { environment } from '../../../environments/environment';
 
 import { EquipoService } from '@core/services/equipo.service';
 import { ServiciosService } from '@core/services/servicios.service';
@@ -107,6 +111,23 @@ export class Inicio {
   desdeAnio = this.proyectosSvc.desdeAnio;
 
   readonly email = 'contacto@omitlsoftware.com.mx';
+  /** Número de WhatsApp con lada (52…); vacío = no se muestra el botón. */
+  readonly whatsapp = '';
+
+  private http = inject(HttpClient);
+  estado = signal<'listo' | 'enviando' | 'enviado' | 'error'>('listo');
+
+  enviar(f: HTMLFormElement) {
+    if (!f.reportValidity()) return;
+    const d = new FormData(f);
+    const utm = Object.fromEntries([...new URLSearchParams(location.search)].filter(([k]) => k.startsWith('utm_')));
+    this.estado.set('enviando');
+    this.http
+      .post(`${environment.apiUrl}/api/leads`, {
+        nombre: d.get('nombre'), telefono: d.get('telefono'), mensaje: d.get('mensaje'), web: d.get('web'), utm,
+      })
+      .subscribe({ next: () => this.estado.set('enviado'), error: () => this.estado.set('error') });
+  }
   readonly pasos = [
     { titulo: '1. Entendemos tu operación', texto: 'Qué haces hoy, dónde se atora y quién lo usa.' },
     { titulo: '2. Primera versión usable', texto: 'Lo mínimo que resuelve el problema, en producción.' },
