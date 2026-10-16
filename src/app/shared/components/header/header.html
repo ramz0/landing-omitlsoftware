@@ -7,8 +7,8 @@
       <a class="enlace" routerLink="/aboutus"><app-icono nombre="edificio" /> Quiénes somos</a>
       <a class="enlace" routerLink="/calculator"><app-icono nombre="calculadora" /> Calculadora de presupuesto</a>
       </div>
-      <button class="menu" type="button" aria-label="Menú" [attr.aria-expanded]="abierto()" (click)="abierto.set(!abierto())">{{ abierto() ? '✕' : '☰' }}</button>
       <app-boton href="/#contacto" icono="chat" [flota]="true">Hablemos</app-boton>
+      <button class="menu" type="button" aria-label="Menú" [attr.aria-expanded]="abierto()" (click)="abierto.set(!abierto())">{{ abierto() ? '✕' : '☰' }}</button>
     </div>
   </nav>
 </header>
