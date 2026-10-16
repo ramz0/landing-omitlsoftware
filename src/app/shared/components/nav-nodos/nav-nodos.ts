@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
 
 const NODOS = [
   { id: 'inicio', nombre: 'Inicio' },
@@ -14,7 +14,7 @@ const NODOS = [
 @Component({
   selector: 'app-nav-nodos',
   template: `
-    <nav aria-label="Secciones">
+    <nav aria-label="Secciones" [class.oscuro]="oscuro()">
       @for (n of nodos; track n.id) {
         <a [href]="'#' + n.id" [class.activo]="n.id === activo()" [attr.aria-label]="n.nombre" [attr.aria-current]="n.id === activo() ? 'true' : null">
           <span class="etq">{{ n.nombre }}</span>
@@ -24,10 +24,33 @@ const NODOS = [
   `,
   styleUrl: './nav-nodos.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(window:scroll)': 'medir()' },
 })
 export class NavNodos {
   nodos = NODOS;
   activo = signal('inicio');
+  /** true si el fondo bajo la línea es oscuro: los puntos pasan a la paleta clara. */
+  oscuro = signal(false);
+  private el = inject<ElementRef<HTMLElement>>(ElementRef);
+  private pendiente = false;
+
+  /** Mira el color de fondo detrás de la línea (sube por los padres hasta uno opaco). */
+  medir() {
+    if (this.pendiente) return;
+    this.pendiente = true;
+    requestAnimationFrame(() => {
+      this.pendiente = false;
+      const nav = this.el.nativeElement;
+      let e = document
+        .elementsFromPoint(document.documentElement.clientWidth - 14, innerHeight / 2)
+        .find((x) => !nav.contains(x)) as HTMLElement | undefined;
+      for (; e; e = e.parentElement ?? undefined) {
+        const [r, g, b, a = 1] = (getComputedStyle(e).backgroundColor.match(/[\d.]+/g) ?? []).map(Number);
+        if (a > 0.5) return this.oscuro.set(0.299 * r + 0.587 * g + 0.114 * b < 140);
+      }
+      this.oscuro.set(false);
+    });
+  }
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -41,6 +64,7 @@ export class NavNodos {
         const el = document.getElementById(n.id);
         if (el) io.observe(el);
       });
+      this.medir();
       destroyRef.onDestroy(() => io.disconnect());
     });
   }
