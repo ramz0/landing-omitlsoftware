@@ -83,7 +83,7 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
 .servicio h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
 
 
-/* Quiénes somos: tarjetas verticales iguales; la última fila (si queda incompleta) se centra. */
+/* Equipo de desarrollo: tarjetas verticales iguales; la última fila (si queda incompleta) se centra. */
 .equipo {
   display: flex;
   flex-wrap: wrap;
