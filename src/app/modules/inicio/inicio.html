@@ -75,8 +75,7 @@
     } @else {
       <form class="form" #f (submit)="$event.preventDefault(); enviar(f)">
         <input name="nombre" placeholder="Tu nombre" required maxlength="120" autocomplete="name" />
-        <input name="telefono" type="tel" placeholder="WhatsApp o teléfono (10 dígitos)" required
-               pattern="[0-9 +()\-]{10,20}" autocomplete="tel" />
+        <input name="telefono" type="tel" placeholder="WhatsApp o teléfono (10 dígitos)" required inputmode="tel" autocomplete="tel" />
         <input name="mensaje" placeholder="¿Qué necesitas? (opcional)" maxlength="1000" />
         <input name="web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit" [disabled]="estado() === 'enviando'">{{ estado() === 'enviando' ? 'Enviando…' : 'Quiero una propuesta' }}</button>
