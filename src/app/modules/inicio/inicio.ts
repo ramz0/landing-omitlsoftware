@@ -10,15 +10,13 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
-
 import gsap from 'gsap';
 
-import { environment } from '../../../environments/environment';
 
 import { EquipoService } from '@core/services/equipo.service';
 import { ServiciosService } from '@core/services/servicios.service';
 import { ProyectosService } from '@core/services/proyectos.service';
+import { FormContacto } from '@shared/components/form-contacto/form-contacto';
 import { Boton } from '@shared/components/boton/boton';
 import { LineasVelocidad } from '@shared/components/lineas-velocidad/lineas-velocidad';
 import { ScrollWorld } from '@shared/components/scroll-world/scroll-world';
@@ -29,7 +27,7 @@ import { ProyectoCard } from '@shared/components/proyecto-card/proyecto-card';
 
 @Component({
   selector: 'app-inicio',
-  imports: [LineasVelocidad, ScrollWorld, ProyectoCard, PersonaCard, Escritorio, Boton, NavNodos],
+  imports: [LineasVelocidad, ScrollWorld, ProyectoCard, PersonaCard, Escritorio, Boton, NavNodos, FormContacto],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -114,20 +112,6 @@ export class Inicio {
   /** Número de WhatsApp con lada (52…); vacío = no se muestra el botón. */
   readonly whatsapp = '';
 
-  private http = inject(HttpClient);
-  estado = signal<'listo' | 'enviando' | 'enviado' | 'error'>('listo');
-
-  enviar(f: HTMLFormElement) {
-    if (!f.reportValidity()) return;
-    const d = new FormData(f);
-    const utm = Object.fromEntries([...new URLSearchParams(location.search)].filter(([k]) => k.startsWith('utm_')));
-    this.estado.set('enviando');
-    this.http
-      .post(`${environment.apiUrl}/api/leads`, {
-        nombre: d.get('nombre'), telefono: d.get('telefono'), mensaje: d.get('mensaje'), web: d.get('web'), utm,
-      })
-      .subscribe({ next: () => this.estado.set('enviado'), error: () => this.estado.set('error') });
-  }
   readonly pasos = [
     { titulo: '1. Entendemos tu operación', texto: 'Qué haces hoy, dónde se atora y quién lo usa.' },
     { titulo: '2. Primera versión usable', texto: 'Lo mínimo que resuelve el problema, en producción.' },

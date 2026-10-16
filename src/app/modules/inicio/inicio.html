@@ -70,20 +70,7 @@
   <div class="wrap">
     <h2>¿Tienes un proceso que hoy vive en hojas de cálculo?</h2>
     <p class="lead">Cuéntanos qué necesitas y te respondemos con una propuesta clara.</p>
-    @if (estado() === 'enviado') {
-      <p class="ok">¡Gracias! Te escribimos o llamamos pronto.</p>
-    } @else {
-      <form class="form" #f (submit)="$event.preventDefault(); enviar(f)">
-        <input name="nombre" placeholder="Tu nombre" required maxlength="120" autocomplete="name" />
-        <input name="telefono" type="tel" placeholder="WhatsApp o teléfono (10 dígitos)" required inputmode="tel" autocomplete="tel" />
-        <input name="mensaje" placeholder="¿Qué necesitas? (opcional)" maxlength="1000" />
-        <input name="web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button type="submit" [disabled]="estado() === 'enviando'">{{ estado() === 'enviando' ? 'Enviando…' : 'Quiero una propuesta' }}</button>
-        @if (estado() === 'error') {
-          <p class="error">No se pudo enviar. Intenta de nuevo o escríbenos a {{ email }}.</p>
-        }
-      </form>
-    }
+    <app-form-contacto />
     <p class="accion">
       @if (whatsapp) {
         <app-boton [href]="'https://wa.me/' + whatsapp + '?text=Hola,%20quiero%20cotizar%20un%20proyecto'" variante="amarillo">
