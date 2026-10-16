@@ -345,6 +345,7 @@ export async function crearEscena(op: OpcionesEscena) {
   // Cámara: encuadra el teclado.
   let inclinacion = THREE.MathUtils.degToRad(52);
   let retrato = false;
+  let angosto = false; // el texto va en HTML (.info), no impreso en la mesa
   let hayIcono = false;
   const poseB = { pos: new THREE.Vector3(), mira: new THREE.Vector3(0, 0, 0) };
   const ajustar = () => {
@@ -357,7 +358,8 @@ export async function crearEscena(op: OpcionesEscena) {
     // Teclado: lo más ancho posible; si el contenedor es muy bajo manda el alto.
     // En pantallas verticales (móvil) el teclado se gira 90° y se ve casi desde arriba: así ocupa el alto
     // de la pantalla y las teclas quedan del doble de tamaño. La información va en el texto HTML.
-    retrato = w < h * 0.8;
+    retrato = false; // ponytail: girar el teclado en vertical se veía raro; se queda horizontal y se ajusta al ancho
+    angosto = w < 700;
     mundo.rotation.y = retrato ? Math.PI / 2 : 0;
     mundo.position.z = retrato ? 0 : ZONA_INFO / 2;
     planos.forEach((p) => (p.rotation.z = retrato ? -Math.PI / 2 : 0)); // los iconos siguen legibles
@@ -469,8 +471,8 @@ export async function crearEscena(op: OpcionesEscena) {
       opTexto = 0;
     }
     emerge = Math.min(1, emerge + dt * 2.2);
-    iconoMesa.visible = hayIcono && !retrato;
-    planoTexto.visible = !retrato;
+    iconoMesa.visible = hayIcono && !angosto;
+    planoTexto.visible = !angosto;
     iconoMesa.scale.y = Math.max(0.001, 1 - Math.pow(1 - emerge, 3));
     opTexto = Math.min(1, opTexto + dt * 3);
     matTexto.opacity = opTexto;

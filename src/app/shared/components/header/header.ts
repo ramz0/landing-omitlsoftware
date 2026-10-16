@@ -17,6 +17,9 @@ export class Header {
   /** Con scroll el header se adelgaza. */
   compacto = signal(false);
 
+  /** Menú desplegable en móvil. */
+  abierto = signal(false);
+
   alScroll() {
     this.compacto.set(window.scrollY > 40);
   }

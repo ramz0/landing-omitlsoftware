@@ -46,4 +46,4 @@ a.activo::after { opacity: 1; scale: 2; background: var(--activo); }
 }
 a:hover .etq,
 a:focus-visible .etq { opacity: 1; translate: 0 0; }
-@media (max-width: 900px) { nav { display: none; } }
+@media (max-width: 900px) { nav { right: 0.1rem; } }

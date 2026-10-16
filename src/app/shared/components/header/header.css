@@ -17,11 +17,30 @@ img { height: 40px; transition: height 0.25s ease; }
 
 .acciones { display: flex; align-items: center; gap: 1.5rem; }
 
+.enlaces { display: flex; align-items: center; gap: 1.5rem; }
+.menu { display: none; background: none; border: 0; color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; }
 .enlace { display: inline-flex; align-items: center; gap: 0.4rem; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
 .enlace:hover { color: var(--yellow); }
 
 .compacto nav { padding: 0.4rem 0; }
 .compacto img { height: 28px; }
 
-@media (max-width: 800px) { .enlace { display: none; } }
+@media (max-width: 800px) {
+  .menu { display: block; }
+  .acciones { gap: 0.75rem; }
+  .enlaces { display: none; }
+  .enlaces.abierto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 1rem 1.25rem 1.25rem;
+    background: var(--night);
+    border-top: 1px solid #ffffff22;
+  }
+}
 @media (prefers-reduced-motion: reduce) { nav, img { transition: none; } }
