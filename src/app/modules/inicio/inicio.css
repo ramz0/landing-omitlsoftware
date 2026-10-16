@@ -103,7 +103,7 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
 /* Desktop: las 5 en una sola fila, tarjetas más cuadradas. */
 @media (min-width: 701px) {
   .equipo { flex-wrap: nowrap; gap: 0.75rem; }
-  .equipo > app-persona-card { flex: 1 1 0; min-width: 0; border-radius: 24px; }
+  .equipo > app-persona-card { flex: 1 1 0; min-width: 0; max-width: 260px; border-radius: 24px; }
 }
 @media (max-width: 700px) {
   .equipo > app-persona-card { flex-basis: 100%; }
