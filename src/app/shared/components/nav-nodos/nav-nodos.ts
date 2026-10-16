@@ -5,6 +5,7 @@ const NODOS = [
   { id: 'servicios', nombre: 'Servicios' },
   { id: 'proyectos', nombre: 'Proyectos' },
   { id: 'tecnologias', nombre: 'Tecnologías' },
+  { id: 'equipo', nombre: 'Equipo' },
   { id: 'proceso', nombre: 'Cómo trabajamos' },
   { id: 'contacto', nombre: 'Contacto' },
 ];

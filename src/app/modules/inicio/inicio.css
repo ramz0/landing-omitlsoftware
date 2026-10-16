@@ -81,3 +81,36 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
     inset 0 -1px 0 rgb(255 255 255 / 0.7);
 }
 .servicio h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
+
+
+/* Equipo de desarrollo: tarjetas verticales iguales; la última fila (si queda incompleta) se centra. */
+.equipo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.equipo > app-persona-card {
+  flex: 0 1 300px;
+  display: block;
+  overflow: hidden;
+  border: 1px solid #d6d6d2;
+  border-radius: 32px;
+}
+/* El escalonado vertical (y su inversión al hover) lo anima gsap con transform en inicio.ts. */
+.equipo { align-items: flex-start; padding-bottom: 3rem; }
+/* Desktop: las 5 en una sola fila, tarjetas más cuadradas. */
+@media (min-width: 701px) {
+  .equipo { flex-wrap: nowrap; gap: 0.75rem; }
+  .equipo > app-persona-card { flex: 1 1 0; min-width: 0; max-width: 260px; border-radius: 24px; }
+}
+@media (max-width: 700px) {
+  .equipo > app-persona-card { flex-basis: 100%; }
+}
+
+/* Oculto hasta que gsap lanza la entrada (una sola vez). */
+.equipo:not(.visto) > app-persona-card { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .equipo:not(.visto) > app-persona-card { opacity: 1; }
+}

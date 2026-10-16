@@ -1,84 +1,32 @@
-import {
-  afterNextRender,
-  afterRenderEffect,
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  ElementRef,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
-
-import gsap from 'gsap';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { EquipoService } from '@core/services/equipo.service';
+import { ProyectosService } from '@core/services/proyectos.service';
+import { ServiciosService } from '@core/services/servicios.service';
+import { Boton } from '@shared/components/boton/boton';
 import { PersonaCard } from '@shared/components/persona-card/persona-card';
 
-/** /aboutus: quiénes somos (el equipo). */
+/** /aboutus: quiénes somos. Habla sobre todo de omitl; el equipo va al final, más breve que en la home. */
 @Component({
   selector: 'app-aboutus',
-  imports: [PersonaCard],
+  imports: [PersonaCard, Boton],
   templateUrl: './aboutus.html',
   styleUrl: './aboutus.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutUs {
-  private equipoEl = viewChild<ElementRef<HTMLElement>>('equipo');
-
-  /** Pasa a true la primera vez que el equipo entra en pantalla y ya no vuelve a false. */
-  equipoVisto = signal(false);
-
-  /** Escalonado invertido: las tarjetas que eran altas pasan a ser bajas. */
-  invertido = signal(false);
-
-  /** Offset vertical de la tarjeta i: las bajas bajan 1.5rem en desktop; en móvil (columna) no hay escalonado. */
-  private destino(i: number) {
-    if (innerWidth <= 700) return 0;
-    return (i % 2 === 1) !== this.invertido() ? 24 : 0;
-  }
-
-  private tarjetas() {
-    return Array.from(this.equipoEl()?.nativeElement.children ?? []);
-  }
-
-  /** Pasar el mouse por una tarjeta baja la levanta e invierte el escalonado (se mantiene tras el hover). */
-  alternar(i: number) {
-    if (!this.equipoVisto() || (i % 2 === 1) === this.invertido()) return;
-    this.invertido.update((v) => !v);
-    gsap.to(this.tarjetas(), { y: (j) => this.destino(j), duration: 0.7, ease: 'power3.out', overwrite: 'auto' });
-  }
-
-  constructor() {
-    const destroyRef = inject(DestroyRef);
-    afterNextRender(() => {
-      const el = this.equipoEl()?.nativeElement;
-      if (!el) return;
-      const io = new IntersectionObserver(
-        ([e]) => {
-          if (!e.isIntersecting) return;
-          this.equipoVisto.set(true);
-          io.disconnect();
-        },
-        { threshold: 0.2 },
-      );
-      io.observe(el);
-      destroyRef.onDestroy(() => io.disconnect());
-    });
-
-    // Entrada (una vez, cuando ya hay tarjetas): las altas suben, las bajas bajan.
-    let entro = false;
-    afterRenderEffect(() => {
-      if (entro || !this.equipoVisto() || !this.personas().length) return;
-      entro = true;
-      const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      gsap.fromTo(
-        this.tarjetas(),
-        { opacity: 0, y: (i) => this.destino(i) + (i % 2 === 0 ? 48 : -48) },
-        { opacity: 1, y: (i) => this.destino(i), duration: reducido ? 0 : 0.9, ease: 'power3.out', stagger: 0.1 },
-      );
-    });
-  }
+  private proyectosSvc = inject(ProyectosService);
 
   personas = inject(EquipoService).personas;
+  servicios = inject(ServiciosService).servicios;
+  totalProyectos = this.proyectosSvc.totalProyectos;
+  totalUsuarios = this.proyectosSvc.totalUsuarios;
+  desdeAnio = this.proyectosSvc.desdeAnio;
+
+  readonly principios = [
+    { titulo: 'Que se use', texto: 'Medimos el software por el uso diario de la gente, no por lo que promete en una presentación.' },
+    { titulo: 'A tu medida', texto: 'Partimos de cómo opera tu negocio y construimos encima, sin obligarte a cambiar tu forma de trabajar.' },
+    { titulo: 'Entregas cortas', texto: 'Una primera versión usable en semanas y mejoras continuas sobre el sistema real.' },
+    { titulo: 'Nos quedamos', texto: 'Mantenemos y damos soporte a lo que construimos; no lo entregamos y desaparecemos.' },
+  ];
 }

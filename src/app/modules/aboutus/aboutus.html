@@ -1,14 +1,73 @@
-<section id="equipo">
+<section class="intro">
   <div class="wrap">
-    <h2>Equipo de desarrollo</h2>
+    <p class="etq">Quiénes somos</p>
+    <h1>Hacemos software que tu negocio <span>sí usa</span>.</h1>
     <p class="lead">
-      omitl software reúne en 2026 a profesionales del software con experiencia real en desarrollo.
-      En esta era de la IA proponemos soluciones concretas, hechas por personas que saben construirlas.
+      omitl software es un estudio de desarrollo en México. Diseñamos, construimos y mantenemos las
+      herramientas digitales de negocios y empresas: desde una landing page hasta sistemas con
+      miles de usuarios.
     </p>
-    <div class="equipo" #equipo [class.visto]="equipoVisto()" [class.inv]="invertido()">
-      @for (p of personas(); track p.nombre; let i = $index) {
-        <app-persona-card [persona]="p" (mouseenter)="alternar(i)" />
+    <dl class="stats">
+      <div><dt>proyectos en operación</dt><dd>{{ totalProyectos() }}</dd></div>
+      <div><dt>usuarios en nuestros sistemas</dt><dd>{{ totalUsuarios() }}</dd></div>
+      <div><dt>en operación continua</dt><dd>Desde {{ desdeAnio() }}</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <div class="wrap dos">
+    <div>
+      <h2>Por qué existimos</h2>
+      <p>
+        Muchos negocios viven entre hojas de cálculo, mensajes y procesos que nadie documentó.
+        Existimos para convertir eso en sistemas simples, rápidos y hechos para quien los usa.
+      </p>
+      <p>
+        Trabajamos de cerca contigo, entendemos primero tu operación y entregamos algo usable
+        pronto. Después lo hacemos crecer con tu equipo trabajando sobre el sistema real.
+      </p>
+    </div>
+    <ul class="principios">
+      @for (p of principios; track p.titulo) {
+        <li>
+          <b>{{ p.titulo }}</b>
+          {{ p.texto }}
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="que-hacemos">
+  <div class="wrap">
+    <h2>Qué hacemos</h2>
+    <ul class="servicios">
+      @for (s of servicios(); track s.id) {
+        <li>
+          <b>{{ s.nombre }}</b>
+          {{ s.descripcion }}
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Las personas detrás</h2>
+    <p class="lead">Profesionales del software con experiencia real en desarrollo.</p>
+    <div class="equipo">
+      @for (p of personas(); track p.nombre) {
+        <app-persona-card [persona]="p" />
       }
     </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>¿Hablamos de tu proyecto?</h2>
+    <app-boton href="/#contacto" variante="jade">Contáctanos</app-boton>
   </div>
 </section>

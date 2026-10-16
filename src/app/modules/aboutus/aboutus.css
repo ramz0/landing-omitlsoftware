@@ -1,35 +1,32 @@
 section { padding: 4rem 0; }
-h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
-.lead { max-width: 60ch; opacity: 0.75; }
+h1 { font-size: clamp(1.9rem, 4.5vw, 3rem); margin-bottom: 1rem; }
+h1 span { color: var(--yellow); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.75rem; }
+.etq { font-weight: 600; color: var(--jade); margin-bottom: 0.5rem; }
+.lead { max-width: 60ch; opacity: 0.8; }
 
-/* Equipo de desarrollo: tarjetas verticales iguales; la última fila (si queda incompleta) se centra. */
-.equipo {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.25rem;
-  margin-top: 1.5rem;
-}
+.stats { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-top: 2.5rem; }
+.stats dt { font-size: 0.85rem; opacity: 0.7; }
+.stats dd { font-size: 1.75rem; font-weight: 700; }
+
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.dos p { margin-bottom: 1rem; max-width: 55ch; }
+.principios, .servicios { list-style: none; padding: 0; display: grid; gap: 1rem; }
+.principios li, .servicios li { padding: 1rem 1.25rem; border: 1px solid #d6d6d2; border-radius: 16px; }
+.principios b, .servicios b { display: block; margin-bottom: 0.25rem; }
+.servicios { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 1.5rem; }
+
+/* Equipo: versión breve, tarjetas pequeñas centradas (sin animación). */
+.equipo { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
 .equipo > app-persona-card {
-  flex: 0 1 300px;
+  flex: 0 1 240px;
   display: block;
   overflow: hidden;
   border: 1px solid #d6d6d2;
-  border-radius: 32px;
-}
-/* El escalonado vertical (y su inversión al hover) lo anima gsap con transform en inicio.ts. */
-.equipo { align-items: flex-start; padding-bottom: 3rem; }
-/* Desktop: las 5 en una sola fila, tarjetas más cuadradas. */
-@media (min-width: 701px) {
-  .equipo { flex-wrap: nowrap; gap: 0.75rem; }
-  .equipo > app-persona-card { flex: 1 1 0; min-width: 0; max-width: 260px; border-radius: 24px; }
-}
-@media (max-width: 700px) {
-  .equipo > app-persona-card { flex-basis: 100%; }
+  border-radius: 24px;
 }
 
-/* Oculto hasta que gsap lanza la entrada (una sola vez). */
-.equipo:not(.visto) > app-persona-card { opacity: 0; }
-@media (prefers-reduced-motion: reduce) {
-  .equipo:not(.visto) > app-persona-card { opacity: 1; }
-}
+.cta { text-align: center; }
+.cta h2 { margin-bottom: 1.25rem; }
+
+@media (max-width: 800px) { .dos { grid-template-columns: 1fr; gap: 2rem; } }
