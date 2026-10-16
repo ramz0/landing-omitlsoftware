@@ -31,9 +31,6 @@ const ESCENAS: Escena[] = [
 ];
 
 const SEPARACION = 16;
-/** Pantalla del televisor, en unidades de la sala. */
-const MW = 16;
-const MH = 9;
 /** Hasta qué avance del scroll dura el vuelo por el mundo; el resto es la cámara saliendo del monitor. */
 const FIN_MUNDO = 0.72;
 
@@ -67,11 +64,15 @@ export class ScrollWorld {
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
     // ---- Mundo neón: se renderiza a una textura que es la pantalla del televisor ----
-    const rt = new THREE.WebGLRenderTarget(1280, 720);
+    // En pantallas verticales (móvil) el monitor también es vertical y el mundo se compone para ese formato.
+    const retrato = canvas.clientWidth < canvas.clientHeight;
+    const MW = retrato ? 9 : 16;
+    const MH = retrato ? 16 : 9;
+    const rt = new THREE.WebGLRenderTarget(retrato ? 720 : 1280, retrato ? 1280 : 720);
     const mundo = new THREE.Scene();
     mundo.background = new THREE.Color(0x03060f);
     mundo.fog = new THREE.FogExp2(0x03060f, 0.028);
-    const camMundo = new THREE.PerspectiveCamera(60, 16 / 9, 0.1, 200);
+    const camMundo = new THREE.PerspectiveCamera(retrato ? 80 : 60, MW / MH, 0.1, 200);
 
     const objetos: THREE.Mesh[] = [];
     const puntos: THREE.Vector3[] = [new THREE.Vector3(0, 0, 14)];
@@ -81,10 +82,10 @@ export class ScrollWorld {
         e.forma(),
         new THREE.MeshBasicMaterial({ color: e.color, wireframe: true }),
       );
-      mesh.position.set(lado * 3.2, 0, -i * SEPARACION);
+      mesh.position.set(lado * (retrato ? 0.9 : 3.2), 0, -i * SEPARACION);
       mundo.add(mesh);
       objetos.push(mesh);
-      puntos.push(new THREE.Vector3(-lado * 1.2, 0.4, -i * SEPARACION + 7));
+      puntos.push(new THREE.Vector3(retrato ? 0 : -lado * 1.2, 0.4, -i * SEPARACION + 7));
     });
     const curva = new THREE.CatmullRomCurve3(puntos);
 

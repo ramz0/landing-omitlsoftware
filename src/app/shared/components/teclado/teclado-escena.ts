@@ -194,6 +194,7 @@ export async function crearEscena(op: OpcionesEscena) {
   const keys: Key[] = [];
   const meshes: InstanceType<typeof THREE.Mesh>[] = [];
   let ordenTec = 0;
+  const planos: InstanceType<typeof THREE.Mesh>[] = [];
 
   filas.forEach((fila, f) => {
     let x = 0;
@@ -213,6 +214,7 @@ export async function crearEscena(op: OpcionesEscena) {
         const plano = new THREE.Mesh(new THREE.PlaneGeometry(lado, lado), mat);
         plano.rotation.x = -Math.PI / 2;
         plano.position.y = ALTO_TECLA + 0.004;
+        planos.push(plano);
         grupo.add(plano);
         key.icono = mat;
         if (k.tec.atajo && !tactil) {
@@ -341,7 +343,9 @@ export async function crearEscena(op: OpcionesEscena) {
   let opTexto = 0;
 
   // Cámara: encuadra el teclado.
-  const inclinacion = THREE.MathUtils.degToRad(52);
+  let inclinacion = THREE.MathUtils.degToRad(52);
+  let retrato = false;
+  let hayIcono = false;
   const poseB = { pos: new THREE.Vector3(), mira: new THREE.Vector3(0, 0, 0) };
   const ajustar = () => {
     const w = contenedor.clientWidth || 1;
@@ -351,10 +355,20 @@ export async function crearEscena(op: OpcionesEscena) {
     const vfov = THREE.MathUtils.degToRad(camera.fov);
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * camera.aspect);
     // Teclado: lo más ancho posible; si el contenedor es muy bajo manda el alto.
-    const alAncho = (anchoTotal + 0.8) / 2 / Math.tan(hfov / 2);
-    const alAlto = ((largoTotal + 1 + ZONA_INFO) * Math.sin(inclinacion) + 1.4) / 2 / Math.tan(vfov / 2);
-    const dist = Math.max(alAncho * 1.2, alAlto * 1.05);
+    // En pantallas verticales (móvil) el teclado se gira 90° y se ve casi desde arriba: así ocupa el alto
+    // de la pantalla y las teclas quedan del doble de tamaño. La información va en el texto HTML.
+    retrato = w < h * 0.8;
+    mundo.rotation.y = retrato ? Math.PI / 2 : 0;
+    mundo.position.z = retrato ? 0 : ZONA_INFO / 2;
+    planos.forEach((p) => (p.rotation.z = retrato ? -Math.PI / 2 : 0)); // los iconos siguen legibles
+    inclinacion = THREE.MathUtils.degToRad(retrato ? 70 : 52);
+    const ancho3d = retrato ? largoTotal + 1 : anchoTotal;
+    const alto3d = retrato ? anchoTotal + 1 : largoTotal + 1 + ZONA_INFO;
+    const alAncho = (ancho3d + 0.8) / 2 / Math.tan(hfov / 2);
+    const alAlto = (alto3d * Math.sin(inclinacion) + 1.4) / 2 / Math.tan(vfov / 2);
+    const dist = Math.max(alAncho * (retrato ? 1.05 : 1.2), alAlto * 1.05);
     poseB.pos.set(0, Math.sin(inclinacion) * dist, Math.cos(inclinacion) * dist);
+    poseB.mira.set(0, 0, retrato ? -1.8 : 0); // en vertical baja el teclado para dejar libre el título
     camera.updateProjectionMatrix();
   };
   const ro = new ResizeObserver(ajustar);
@@ -381,8 +395,7 @@ export async function crearEscena(op: OpcionesEscena) {
   const onDown = (e: PointerEvent) => {
     const k = golpe(e);
     if (!k) return;
-    if (tactil && k.tec) k.sostenida = !k.sostenida;
-    else k.momentanea = true;
+    k.momentanea = true; // igual que con mouse: baja mientras se toca y sube al soltar, también en táctil
     if (k.tec) op.alSeleccionar(k.tec);
   };
   const onDbl = (e: MouseEvent) => {
@@ -411,6 +424,7 @@ export async function crearEscena(op: OpcionesEscena) {
   el.addEventListener('pointerdown', onDown);
   el.addEventListener('dblclick', onDbl);
   el.addEventListener('pointerup', soltar);
+  el.addEventListener('pointercancel', soltar); // un gesto de scroll cancela el toque: sin esto la tecla se queda hundida
   el.addEventListener('pointerleave', onLeave);
   addEventListener('keydown', onKeyDown);
   addEventListener('keyup', onKeyUp);
@@ -449,12 +463,14 @@ export async function crearEscena(op: OpcionesEscena) {
       matTexto.map?.dispose();
       matTexto.map = textoInfo(sel?.nombre ?? '', sel ? (sel.uso ?? '') : AYUDA, !sel);
       matTexto.needsUpdate = true;
-      iconoMesa.visible = !!sel?.icono;
+      hayIcono = !!sel?.icono;
       if (sel?.icono) iconoMesa.geometry = geoIcono(sel.icono) as never;
       emerge = 0;
       opTexto = 0;
     }
     emerge = Math.min(1, emerge + dt * 2.2);
+    iconoMesa.visible = hayIcono && !retrato;
+    planoTexto.visible = !retrato;
     iconoMesa.scale.y = Math.max(0.001, 1 - Math.pow(1 - emerge, 3));
     opTexto = Math.min(1, opTexto + dt * 3);
     matTexto.opacity = opTexto;
@@ -482,6 +498,7 @@ export async function crearEscena(op: OpcionesEscena) {
     removeEventListener('keydown', onKeyDown);
     removeEventListener('keyup', onKeyUp);
     el.removeEventListener('pointerup', soltar);
+  el.removeEventListener('pointercancel', soltar);
     el.removeEventListener('pointerleave', onLeave);
     scene.traverse((o) => {
       if (o instanceof THREE.Mesh) {
