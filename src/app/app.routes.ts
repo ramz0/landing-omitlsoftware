@@ -10,6 +10,8 @@ export const routes: Routes = [
         pathMatch: 'full',
         loadComponent: () => import('@modules/inicio/inicio').then((m) => m.Inicio),
       },
+      { path: 'aboutus', loadComponent: () => import('@modules/aboutus/aboutus').then((m) => m.AboutUs) },
+      { path: 'calculator', loadComponent: () => import('@modules/calculator/calculator').then((m) => m.Calculator) },
     ],
   },
   { path: '**', redirectTo: '' },

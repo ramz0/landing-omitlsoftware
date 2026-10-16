@@ -1,0 +1,14 @@
+<section id="equipo">
+  <div class="wrap">
+    <h2>Equipo de desarrollo</h2>
+    <p class="lead">
+      omitl software reúne en 2026 a profesionales del software con experiencia real en desarrollo.
+      En esta era de la IA proponemos soluciones concretas, hechas por personas que saben construirlas.
+    </p>
+    <div class="equipo" #equipo [class.visto]="equipoVisto()" [class.inv]="invertido()">
+      @for (p of personas(); track p.nombre; let i = $index) {
+        <app-persona-card [persona]="p" (mouseenter)="alternar(i)" />
+      }
+    </div>
+  </div>
+</section>

@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
+import { RouterLink } from '@angular/router';
+
 import { Icono } from '@shared/components/icono/icono';
 import { Boton } from '@shared/components/boton/boton';
 
 @Component({
   selector: 'app-header',
-  imports: [Boton, Icono],
+  imports: [Boton, Icono, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
