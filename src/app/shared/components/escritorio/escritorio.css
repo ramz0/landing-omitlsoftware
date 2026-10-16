@@ -82,3 +82,8 @@
 }
 :host(.sin-webgl) .botones button[aria-pressed='true'] { color: var(--yellow); }
 
+
+.esqueleto { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 30%, #0b122055 50%, transparent 70%) 0 0 / 200% 100%; animation: brillo 1.4s linear infinite; }
+:host(.sin-webgl) .esqueleto { display: none; }
+@keyframes brillo { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .esqueleto { animation: none; } }

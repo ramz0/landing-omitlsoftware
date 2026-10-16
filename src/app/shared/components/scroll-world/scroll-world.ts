@@ -52,10 +52,28 @@ export class ScrollWorld {
   escenas = ESCENAS;
   /** -1 = ya salimos del monitor (sin texto de escena). */
   actual = signal(0);
+  /** false mientras la escena 3D no se ha construido: se muestra el esqueleto. */
+  listo = signal(false);
 
   constructor() {
     const destroyRef = inject(DestroyRef);
-    afterNextRender(() => destroyRef.onDestroy(this.iniciar()));
+    // Se construye (WebGL, costoso) solo al acercarse a la sección y tras un frame, para no bloquear el primer render.
+    afterNextRender(() => {
+      let limpiar: (() => void) | undefined;
+      const io = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        requestAnimationFrame(() => {
+          limpiar = this.iniciar();
+          this.listo.set(true);
+        });
+      }, { rootMargin: '600px' });
+      io.observe(this.host);
+      destroyRef.onDestroy(() => {
+        io.disconnect();
+        limpiar?.();
+      });
+    });
   }
 
   private iniciar(): () => void {

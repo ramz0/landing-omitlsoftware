@@ -16,3 +16,7 @@ h2 { font-size: clamp(1.8rem, 5vw, 3rem); text-shadow: 0 0 24px #00f0ff88; }
 p { margin-top: 0.5rem; color: #cfe; }
 @media (prefers-reduced-motion: reduce) { article { transition: none; } }
 .pista { color: #9fd0ff; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.8rem; }
+
+.esqueleto { position: absolute; inset: 0; background: linear-gradient(110deg, #020306 30%, #0b1220 50%, #020306 70%) 0 0 / 200% 100%; animation: brillo 1.4s linear infinite; }
+@keyframes brillo { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .esqueleto { animation: none; } }

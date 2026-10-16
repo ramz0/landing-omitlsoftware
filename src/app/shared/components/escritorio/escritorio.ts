@@ -43,6 +43,8 @@ export class Escritorio {
   tecnologias = input.required<Tecnologia[]>();
 
   protected activa = signal<Tecnologia | null>(null);
+  /** false mientras la escena 3D se carga: se muestra el esqueleto. */
+  protected listo = signal(false);
   protected filas = computed<Tecla[][]>(() => {
     const porLetra = new Map(
       this.tecnologias()
@@ -62,22 +64,36 @@ export class Escritorio {
   constructor() {
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     const destroyRef = inject(DestroyRef);
-    afterNextRender(async () => {
-      const contenedor = host.querySelector<HTMLElement>('.escena')!;
-      try {
-        // ponytail: la escena se construye una vez; si cambian los datos en caliente no se redibuja.
-        const limpiar = await crearEscena({
-          contenedor,
-          filas: this.filas(),
-          alSeleccionar: (t) => this.activa.set(t),
-          activa: () => this.activa(),
-          progreso: () => 1,
-        });
-        destroyRef.onDestroy(limpiar);
-      } catch {
-        // Sin WebGL: quedan los botones accesibles.
-        host.classList.add('sin-webgl');
-      }
+    // La escena 3D se construye solo al acercarse a la sección (ver también scroll-world).
+    afterNextRender(() => {
+      let limpiar: (() => void) | undefined;
+      let destruido = false;
+      const io = new IntersectionObserver(async ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        const contenedor = host.querySelector<HTMLElement>('.escena')!;
+        try {
+          // ponytail: la escena se construye una vez; si cambian los datos en caliente no se redibuja.
+          limpiar = await crearEscena({
+            contenedor,
+            filas: this.filas(),
+            alSeleccionar: (t) => this.activa.set(t),
+            activa: () => this.activa(),
+            progreso: () => 1,
+          });
+          if (destruido) limpiar();
+          else this.listo.set(true);
+        } catch {
+          // Sin WebGL: quedan los botones accesibles.
+          host.classList.add('sin-webgl');
+        }
+      }, { rootMargin: '800px' });
+      io.observe(host);
+      destroyRef.onDestroy(() => {
+        destruido = true;
+        io.disconnect();
+        limpiar?.();
+      });
     });
   }
 

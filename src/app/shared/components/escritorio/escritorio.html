@@ -1,6 +1,9 @@
 <div class="pista">
   <div class="fondo">
     <div class="escena"></div>
+    @if (!listo()) {
+      <div class="esqueleto" aria-hidden="true"></div>
+    }
 
     <div class="titulo" id="tecnologias">
       <h2>Stack de tecnologías</h2>

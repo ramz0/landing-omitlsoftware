@@ -1,6 +1,6 @@
 <header [class.compacto]="compacto()">
   <nav class="wrap" aria-label="Principal">
-    <img src="logo.svg" alt="omitl software" />
+    <a routerLink="/" fragment="inicio" aria-label="omitl software, ir al inicio"><img src="logo.svg" alt="omitl software" /></a>
     <div class="acciones">
       <div class="enlaces" [class.abierto]="abierto()" (click)="abierto.set(false)">
       <a class="enlace" routerLink="/" fragment="inicio"><app-icono nombre="casa" /> Inicio</a>
