@@ -20,7 +20,7 @@ article.con-foto {
   background: #eee8d6;
   color: var(--night);
 }
-.foto { aspect-ratio: 4 / 5; background-size: cover; background-position: center top; position: relative; }
+.foto { aspect-ratio: 1 / 1; background-size: cover; background-position: center 20%; position: relative; }
 /* Funde la foto con la franja de texto. */
 .foto::after {
   content: '';
@@ -47,7 +47,6 @@ app-redes-sociales { margin-top: 1rem; }
 
 /* Desktop: foto casi cuadrada y texto compacto para que quepan 5 en fila. */
 @media (min-width: 701px) {
-  .foto { aspect-ratio: 1 / 1; }
   .con-foto .texto { padding: 0 0.9rem 1rem; }
   h3 { font-size: 1rem; }
   .bio { -webkit-line-clamp: 3; font-size: 0.82rem; }

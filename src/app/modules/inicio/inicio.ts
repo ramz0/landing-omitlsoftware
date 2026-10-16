@@ -73,6 +73,16 @@ export class Inicio {
       destroyRef.onDestroy(() => io.disconnect());
     });
 
+    // Con #seccion en la URL, el contenido que carga de la API (proyectos, equipo) empuja la página:
+    // al tener ambos, se vuelve a la sección pedida.
+    let ancló = false;
+    afterRenderEffect(() => {
+      const id = location.hash.slice(1);
+      if (ancló || !id || !this.proyectos().length || !this.personas().length) return;
+      ancló = true;
+      document.getElementById(id)?.scrollIntoView({ behavior: 'instant' });
+    });
+
     // Entrada (una vez, cuando ya hay tarjetas): las altas suben, las bajas bajan.
     let entro = false;
     afterRenderEffect(() => {
