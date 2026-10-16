@@ -2,7 +2,27 @@ form { display: grid; gap: 0.75rem; max-width: 460px; margin-top: 1.5rem; }
 input:not([type='checkbox']), textarea { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12px; font: inherit; background: #fff; }
 fieldset { border: 0; padding: 0; display: grid; gap: 0.4rem; }
 legend { font-weight: 600; margin-bottom: 0.4rem; }
-label { display: flex; gap: 0.5rem; align-items: center; cursor: pointer; }
+label {
+  display: flex; gap: 0.6rem; align-items: center; cursor: pointer;
+  padding: 0.55rem 0.8rem; border: 1px solid var(--stone); border-radius: 12px; background: #fff;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+label:hover { border-color: var(--jade); }
+label:has(:checked) { background: var(--jade); border-color: var(--jade); color: #fff; }
+
+/* Casilla propia: cuadro que se llena de amarillo con la palomita en night al marcarse. */
+input[type='checkbox'] {
+  appearance: none; flex: none; width: 1.2rem; height: 1.2rem; margin: 0;
+  border: 2px solid var(--jade); border-radius: 6px; background: #fff; display: grid; place-content: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+input[type='checkbox']::after {
+  content: ''; width: 0.3rem; height: 0.6rem; border: solid var(--night); border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0); transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); margin-top: -2px;
+}
+input[type='checkbox']:checked { background: var(--yellow); border-color: var(--yellow); }
+input[type='checkbox']:checked::after { transform: rotate(45deg) scale(1); }
+input[type='checkbox']:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
 button { padding: 0.8rem 1.4rem; border: 0; border-radius: 999px; background: var(--yellow); color: var(--night); font: inherit; font-weight: 600; cursor: pointer; }
 button:disabled { opacity: 0.6; cursor: wait; }
 .trampa { position: absolute; left: -9999px; }
@@ -10,7 +30,7 @@ button:disabled { opacity: 0.6; cursor: wait; }
 .error { color: #b3261e; }
 
 /* Lo que va apareciendo entra suave (el input inicial no, porque ya estaba). */
-form > :not(:first-child):not(.trampa):not(button) { animation: aparece 0.35s ease-out; }
+form > :not(:first-child):not(.trampa):not(button) { animation: aparece 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
 form > input[name="telefono"] { animation: none; }
-@keyframes aparece { from { opacity: 0; transform: translateY(-6px); } }
+@keyframes aparece { from { opacity: 0; transform: translateY(-18px); } }
 @media (prefers-reduced-motion: reduce) { form > * { animation: none !important; } }
