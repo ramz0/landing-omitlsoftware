@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import { Boton } from '@shared/components/boton/boton';
 
@@ -8,5 +8,9 @@ import { Boton } from '@shared/components/boton/boton';
   templateUrl: './header.html',
   styleUrl: './header.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(window:scroll)': 'compacto.set(scrollY > 40)' },
 })
-export class Header {}
+export class Header {
+  /** Con scroll el header se adelgaza. */
+  compacto = signal(false);
+}

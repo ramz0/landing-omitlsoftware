@@ -1,6 +1,10 @@
-<header>
+<header [class.compacto]="compacto()">
   <nav class="wrap" aria-label="Principal">
     <img src="logo.svg" alt="omitl software" />
-    <app-boton href="#contacto" icono="chat" [flota]="true">Hablemos</app-boton>
+    <div class="acciones">
+      <a class="enlace" href="#equipo">Quiénes somos</a>
+      <a class="enlace" href="#presupuesto">Calculadora de presupuesto</a>
+      <app-boton href="#contacto" icono="chat" [flota]="true">Hablemos</app-boton>
+    </div>
   </nav>
 </header>

@@ -10,6 +10,17 @@ nav {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
+  transition: padding 0.25s ease;
 }
 
-img { height: 40px; }
+img { height: 40px; transition: height 0.25s ease; }
+
+.acciones { display: flex; align-items: center; gap: 1.5rem; }
+.enlace { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.enlace:hover { color: var(--yellow); }
+
+.compacto nav { padding: 0.4rem 0; }
+.compacto img { height: 28px; }
+
+@media (max-width: 800px) { .enlace { display: none; } }
+@media (prefers-reduced-motion: reduce) { nav, img { transition: none; } }
