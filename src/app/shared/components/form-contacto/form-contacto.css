@@ -8,3 +8,9 @@ button:disabled { opacity: 0.6; cursor: wait; }
 .trampa { position: absolute; left: -9999px; }
 .ok { margin-top: 1.5rem; font-weight: 600; color: var(--jade); }
 .error { color: #b3261e; }
+
+/* Lo que va apareciendo entra suave (el input inicial no, porque ya estaba). */
+form > :not(:first-child):not(.trampa):not(button) { animation: aparece 0.35s ease-out; }
+form > input[name="telefono"] { animation: none; }
+@keyframes aparece { from { opacity: 0; transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { form > * { animation: none !important; } }

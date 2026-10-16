@@ -18,19 +18,25 @@ const PRODUCTO: Record<string, string> = {
       <p class="ok">¡Gracias! Te escribimos o llamamos pronto.</p>
     } @else {
       <form #f (submit)="$event.preventDefault(); enviar(f)">
-        <input name="negocio" placeholder="Nombre del negocio" required maxlength="120" autocomplete="organization" />
-        <input name="contacto" placeholder="Tu nombre" required maxlength="120" autocomplete="name" />
-        <input name="telefono" type="tel" placeholder="Celular (10 dígitos)" required inputmode="tel" autocomplete="tel" />
-        <input name="correo" type="email" placeholder="Correo (opcional)" maxlength="120" autocomplete="email" />
-        <fieldset>
-          <legend>¿Qué te interesa?</legend>
-          @for (s of servicios(); track s.id) {
-            <label><input type="checkbox" name="productos" [value]="s.id" /> {{ s.nombre }}</label>
+        <input name="negocio" placeholder="Nombre del negocio" required maxlength="120" autocomplete="organization"
+               (input)="negocio.set($any($event.target).value)" />
+        @if (negocio().trim()) {
+          <input name="contacto" placeholder="Tu nombre o el de quien solicita" required maxlength="120" autocomplete="name" />
+        }
+        <input name="telefono" type="tel" placeholder="Celular (10 dígitos)" required inputmode="tel" autocomplete="tel"
+               (input)="celular.set($any($event.target).value)" />
+        @if (celular().trim()) {
+          <input name="correo" type="email" placeholder="Correo (opcional)" maxlength="120" autocomplete="email" />
+          <fieldset>
+            <legend>¿Qué te interesa que revisemos?</legend>
+            @for (s of servicios(); track s.id) {
+              <label><input type="checkbox" name="productos" [value]="s.id" /> {{ s.nombre }}</label>
+            }
+            <label><input type="checkbox" name="otros_chk" (change)="otros.set($any($event.target).checked)" /> Otros</label>
+          </fieldset>
+          @if (otros()) {
+            <textarea name="otros" rows="3" maxlength="1000" placeholder="Cuéntanos qué necesitas"></textarea>
           }
-          <label><input type="checkbox" name="otros_chk" (change)="otros.set($any($event.target).checked)" /> Otros</label>
-        </fieldset>
-        @if (otros()) {
-          <textarea name="otros" rows="3" maxlength="1000" placeholder="Cuéntanos qué necesitas"></textarea>
         }
         <input name="web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit" [disabled]="estado() === 'enviando'">{{ estado() === 'enviando' ? 'Enviando…' : 'Quiero una propuesta' }}</button>
@@ -48,6 +54,9 @@ export class FormContacto {
   servicios = inject(ServiciosService).servicios;
   estado = signal<'listo' | 'enviando' | 'enviado' | 'error'>('listo');
   otros = signal(false);
+  // Los campos aparecen conforme se escribe: negocio → nombre; celular → correo y checklist.
+  negocio = signal('');
+  celular = signal('');
 
   enviar(f: HTMLFormElement) {
     if (!f.reportValidity()) return;
