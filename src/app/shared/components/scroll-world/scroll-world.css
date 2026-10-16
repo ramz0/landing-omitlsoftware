@@ -1,0 +1,18 @@
+:host { display: block; height: 800vh; background: #020306; }
+.escena {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  /* El mismo fondo oscuro azulado del stack de tecnologías. */
+  background: radial-gradient(ellipse 60% 45% at 50% 30%, #0b1220, #020306 75%), #020306;
+}
+canvas { width: 100%; height: 100%; display: block; }
+.texto { position: absolute; inset: auto 0 12vh; display: grid; justify-items: center; pointer-events: none; }
+article {
+  grid-area: 1 / 1; width: min(560px, 100% - 2.5rem); color: #fff; text-align: center;
+  opacity: 0; transform: translateY(1rem); transition: opacity 0.4s, transform 0.4s;
+}
+article.activa { opacity: 1; transform: none; }
+small { color: #00f0ff; letter-spacing: 0.15em; }
+h2 { font-size: clamp(1.8rem, 5vw, 3rem); text-shadow: 0 0 24px #00f0ff88; }
+p { margin-top: 0.5rem; color: #cfe; }
+@media (prefers-reduced-motion: reduce) { article { transition: none; } }
+.pista { color: #9fd0ff; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.8rem; }

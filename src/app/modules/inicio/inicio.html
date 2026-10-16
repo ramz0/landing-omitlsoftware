@@ -15,20 +15,7 @@
   </div>
 </section>
 
-<section id="servicios">
-  <div class="wrap">
-    <h2>Servicios</h2>
-    <p class="lead">Desde una página para presentarte hasta el sistema que sostiene tu operación.</p>
-    <div class="grid">
-      @for (srv of servicios(); track srv.id) {
-        <article class="servicio">
-          <h3>{{ srv.nombre }}</h3>
-          <p>{{ srv.descripcion }}</p>
-        </article>
-      }
-    </div>
-  </div>
-</section>
+<app-scroll-world id="servicios" />
 
 <section id="proyectos">
   <div class="wrap">
@@ -44,13 +31,8 @@
   </div>
 </section>
 
-<section id="tecnologias">
-  <div class="wrap">
-    <h2>Stack de tecnologías</h2>
-    <p class="lead">Con qué construimos: elegimos la herramienta según lo que cada proyecto necesita.</p>
-    <app-teclado [tecnologias]="tecnologias()" />
-  </div>
-</section>
+<!-- El título "Stack de tecnologías" (id="tecnologias") vive dentro de app-escritorio. -->
+<app-escritorio [tecnologias]="tecnologias()" />
 
 <section id="quienes-somos">
   <div class="wrap">
@@ -59,7 +41,7 @@
       omitl software surge de una idea de Luis Ramírez Durán, su fundador. Hoy trabaja junto a
       colaboradores profesionales que crean aplicaciones a la medida, cada uno en su especialidad.
     </p>
-    <div class="grid">
+    <div class="equipo" #equipo [class.visto]="equipoVisto()">
       @for (p of personas(); track p.nombre) {
         <app-persona-card [persona]="p" />
       }

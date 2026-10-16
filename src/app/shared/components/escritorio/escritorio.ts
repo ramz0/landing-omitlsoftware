@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 
 import { Tecnologia } from '@models/proyecto.model';
-import { crearEscena } from './teclado-escena';
+import { crearEscena } from '@shared/components/teclado/teclado-escena';
 
 interface Tecla {
   /** Ancho en cuartos de unidad (4 = tecla normal); cada fila suma 60. */
@@ -29,17 +29,20 @@ const FILAS = [
   [5, 5, 5, 25, 5, 5, 5, 5],
 ];
 const CARACTERES = ['`1234567890-=', 'qwertyuiop[]', "asdfghjkl;'", 'zxcvbnm,./'];
-// Fila 0 incluye ` y =; las filas 1-3 saltan la tecla ancha inicial (Tab, Caps, Shift).
 
-/** Teclado de computadora: cada tecnología va en la tecla de su letra y el resto son teclas lisas. */
+/**
+ * Teclado 3D con las tecnologías (Stack), en un cuarto oscuro iluminado por una luz azulada.
+ */
 @Component({
-  selector: 'app-teclado',
-  templateUrl: './teclado.html',
-  styleUrl: './teclado.css',
+  selector: 'app-escritorio',
+  templateUrl: './escritorio.html',
+  styleUrl: './escritorio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Teclado {
+export class Escritorio {
   tecnologias = input.required<Tecnologia[]>();
+
+  protected activa = signal<Tecnologia | null>(null);
   protected filas = computed<Tecla[][]>(() => {
     const porLetra = new Map(
       this.tecnologias()
@@ -55,24 +58,24 @@ export class Teclado {
       });
     });
   });
-  protected activa = signal<Tecnologia | null>(null);
 
   constructor() {
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     const destroyRef = inject(DestroyRef);
     afterNextRender(async () => {
       const contenedor = host.querySelector<HTMLElement>('.escena')!;
-      // ponytail: la escena se construye una vez; si cambian las tecnologías en caliente no se redibuja.
       try {
+        // ponytail: la escena se construye una vez; si cambian los datos en caliente no se redibuja.
         const limpiar = await crearEscena({
           contenedor,
           filas: this.filas(),
           alSeleccionar: (t) => this.activa.set(t),
           activa: () => this.activa(),
+          progreso: () => 1,
         });
         destroyRef.onDestroy(limpiar);
       } catch {
-        // Sin WebGL: quedan los botones accesibles y la pantalla.
+        // Sin WebGL: quedan los botones accesibles.
         host.classList.add('sin-webgl');
       }
     });

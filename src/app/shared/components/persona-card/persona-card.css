@@ -10,14 +10,34 @@ article {
   background-position: center top;
 }
 
-/* Con foto: la card es más alta, la foto es el fondo y el texto va abajo sobre un degradado. */
+/* Con foto: la foto va limpia arriba y el texto abajo, sobre fondo sólido (nada de texto sobre la imagen). */
 article.con-foto {
-  min-height: 26rem;
-  align-items: flex-end;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  border-radius: 0; /* el recorte redondeado lo da el contenedor */
   border-color: transparent;
-  color: var(--mist);
+  background: #eee8d6;
+  color: var(--night);
 }
-.con-foto .rol { color: var(--yellow); }
+.foto { aspect-ratio: 4 / 5; background-size: cover; background-position: center top; position: relative; }
+/* Funde la foto con la franja de texto. */
+.foto::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 45%;
+  background: linear-gradient(transparent, #eee8d6);
+}
+.con-foto .texto { padding: 0 1.25rem 1.25rem; margin-top: -1.5rem; position: relative; }
+.con-foto .rol { color: var(--jade); }
+.bio {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.92rem;
+}
 
 .verificado { flex: none; font-size: 2.25rem; color: var(--jade); }
 

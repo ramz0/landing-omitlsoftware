@@ -1,0 +1,25 @@
+<div class="pista">
+  <div class="fondo">
+    <div class="escena"></div>
+
+    <div class="titulo" id="tecnologias">
+      <h2>Stack de tecnologías</h2>
+      <p class="lead">Con qué construimos: elegimos la herramienta según lo que cada proyecto necesita.</p>
+    </div>
+
+    <p class="info" aria-live="polite">
+      @if (activa(); as t) {
+        <b>{{ t.nombre }}</b> {{ t.uso }}
+      } @else {
+        Presiona una tecla para ver cómo usamos cada tecnología.
+      }
+    </p>
+  </div>
+
+  <!-- Respaldo accesible (y sin WebGL): lo que la escena dibuja, como botones. -->
+  <ul class="botones">
+    @for (t of tecnologias(); track t.nombre) {
+      <li><button type="button" [attr.aria-pressed]="activa() === t" (click)="seleccionar(t)">{{ t.nombre }}</button></li>
+    }
+  </ul>
+</div>

@@ -1,5 +1,6 @@
 import type { Tecnologia } from '@models/proyecto.model';
 import { PATHS } from '@shared/components/icono/icono';
+import { crearEntorno } from './entorno';
 
 export interface TeclaEscena {
   /** Ancho en cuartos de unidad (4 = tecla normal). */
@@ -14,6 +15,8 @@ export interface OpcionesEscena {
   alSeleccionar: (t: Tecnologia) => void;
   /** Tecnología cuya información se proyecta sobre la mesa. */
   activa: () => Tecnologia | null;
+  /** Avance del scroll, 0 → 1 (las letras del teclado real solo responden con el teclado a la vista). */
+  progreso: () => number;
 }
 
 const PASO = 1;
@@ -50,14 +53,14 @@ export async function crearEscena(op: OpcionesEscena) {
   // Luz de entorno de estudio: da reflejos suaves en la carcasa y volumen al plástico mate.
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.6;
+  scene.environmentIntensity = 0.08;
   pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xdfe6ff, 0x1a1a1e, 1.2));
-  const sol = new THREE.DirectionalLight(0xffffff, 2.2);
+  scene.add(new THREE.HemisphereLight(0x6f8fd0, 0x050507, 0.18));
+  const sol = new THREE.DirectionalLight(0x7f9fe0, 0.25);
   sol.position.set(-4, 12, 7);
   sol.castShadow = true;
   sol.shadow.mapSize.set(2048, 2048);
-  Object.assign(sol.shadow.camera, { left: -14, right: 14, top: 10, bottom: -10, near: 1, far: 40 });
+  Object.assign(sol.shadow.camera, { left: -16, right: 16, top: 14, bottom: -14, near: 1, far: 50 });
   sol.shadow.radius = 4;
   scene.add(sol);
   // El teclado va adelante y detrás queda la mesa libre para la información.
@@ -258,6 +261,10 @@ export async function crearEscena(op: OpcionesEscena) {
   mesa.renderOrder = -1; // transparente: debe dibujarse antes que el texto para no atenuarlo
   scene.add(mesa);
 
+  // Monitor flotante detrás del teclado.
+  const entorno = crearEntorno({ THREE });
+  scene.add(entorno.grupo);
+
   // Información sobre la mesa: el SVG de la tecnología extruido (con sombra) y su texto "impreso".
   const centroInfo = -(largoTotal + 1) / 2 - 0.35;
   const pastilla = new THREE.MeshStandardMaterial({
@@ -333,8 +340,9 @@ export async function crearEscena(op: OpcionesEscena) {
   let emerge = 1;
   let opTexto = 0;
 
-  // Cámara: inclinada hacia abajo, ajustada al ancho disponible.
+  // Cámara: encuadra el teclado.
   const inclinacion = THREE.MathUtils.degToRad(52);
+  const poseB = { pos: new THREE.Vector3(), mira: new THREE.Vector3(0, 0, 0) };
   const ajustar = () => {
     const w = contenedor.clientWidth || 1;
     const h = contenedor.clientHeight || 1;
@@ -342,13 +350,11 @@ export async function crearEscena(op: OpcionesEscena) {
     camera.aspect = w / h;
     const vfov = THREE.MathUtils.degToRad(camera.fov);
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * camera.aspect);
-    // Lo más ancho posible; si el contenedor es muy bajo manda el alto.
+    // Teclado: lo más ancho posible; si el contenedor es muy bajo manda el alto.
     const alAncho = (anchoTotal + 0.8) / 2 / Math.tan(hfov / 2);
     const alAlto = ((largoTotal + 1 + ZONA_INFO) * Math.sin(inclinacion) + 1.4) / 2 / Math.tan(vfov / 2);
-    // la fila cercana se ve más ancha por la perspectiva
     const dist = Math.max(alAncho * 1.2, alAlto * 1.05);
-    camera.position.set(0, Math.sin(inclinacion) * dist, Math.cos(inclinacion) * dist);
-    camera.lookAt(0, 0, 0);
+    poseB.pos.set(0, Math.sin(inclinacion) * dist, Math.cos(inclinacion) * dist);
     camera.updateProjectionMatrix();
   };
   const ro = new ResizeObserver(ajustar);
@@ -390,7 +396,7 @@ export async function crearEscena(op: OpcionesEscena) {
   };
   // Letras del teclado real (solo con puntero fino y mientras el teclado está a la vista).
   const onKeyDown = (e: KeyboardEvent) => {
-    if (!activo || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!activo || op.progreso() < 0.6 || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable]')) return;
     const k = atajos.get(e.key.toLowerCase());
     if (!k?.tec) return;
@@ -452,6 +458,9 @@ export async function crearEscena(op: OpcionesEscena) {
     iconoMesa.scale.y = Math.max(0.001, 1 - Math.pow(1 - emerge, 3));
     opTexto = Math.min(1, opTexto + dt * 3);
     matTexto.opacity = opTexto;
+    entorno.tick(performance.now() / 1000);
+    camera.position.copy(poseB.pos);
+    camera.lookAt(poseB.mira);
     renderer.render(scene, camera);
   };
 

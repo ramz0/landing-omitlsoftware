@@ -82,5 +82,40 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
 }
 .servicio h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
 
-/* El teclado del stack sale del .wrap a todo el ancho. */
-#tecnologias { overflow-x: clip; }
+
+/* Quiénes somos: tarjetas verticales iguales; la última fila (si queda incompleta) se centra. */
+.equipo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.equipo > app-persona-card {
+  flex: 0 1 300px;
+  display: block;
+  overflow: hidden;
+  border: 1px solid #d6d6d2;
+  border-radius: 32px;
+}
+/* Escalonado: las tarjetas pares bajan, así el grid se siente ordenado pero no en una sola línea. */
+.equipo { align-items: flex-start; padding-bottom: 3rem; }
+.equipo > app-persona-card:nth-child(even) { margin-top: 3rem; }
+@media (max-width: 700px) {
+  .equipo > app-persona-card { flex-basis: 100%; }
+  .equipo > app-persona-card:nth-child(even) { margin-top: 0; }
+}
+
+/* Entrada (una sola vez): las que quedan arriba suben, las que quedan abajo bajan. */
+.equipo:not(.visto) > app-persona-card { opacity: 0; }
+.equipo:not(.visto) > app-persona-card:nth-child(odd) { translate: 0 3rem; }
+.equipo:not(.visto) > app-persona-card:nth-child(even) { translate: 0 -3rem; }
+.equipo > app-persona-card { transition: opacity 0.7s ease-out, translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.equipo > app-persona-card:nth-child(2) { transition-delay: 0.1s; }
+.equipo > app-persona-card:nth-child(3) { transition-delay: 0.2s; }
+.equipo > app-persona-card:nth-child(4) { transition-delay: 0.3s; }
+.equipo > app-persona-card:nth-child(5) { transition-delay: 0.4s; }
+@media (prefers-reduced-motion: reduce) {
+  .equipo:not(.visto) > app-persona-card { opacity: 1; translate: none; }
+  .equipo > app-persona-card { transition: none; }
+}

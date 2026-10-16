@@ -15,6 +15,6 @@ export class PersonaCard {
   persona = input.required<Persona>();
   fondo = computed(() => {
     const foto = this.persona().foto;
-    return foto ? `linear-gradient(to top, rgb(10 41 41 / 0.92) 35%, transparent 75%), url(${foto})` : null;
+    return foto ? `url(${foto})` : null;
   });
 }
