@@ -56,12 +56,7 @@
 <section>
   <div class="wrap">
     <h2>Las personas detrás</h2>
-    <p class="lead">Profesionales del software con experiencia real en desarrollo.</p>
-    <div class="equipo">
-      @for (p of personas(); track p.nombre) {
-        <app-persona-card [persona]="p" />
-      }
-    </div>
+    <app-en-construccion [pagina]="false" titulo="Estamos armando esta sección" mensaje="Muy pronto conocerás al equipo." />
   </div>
 </section>
 

@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { EquipoService } from '@core/services/equipo.service';
 import { ProyectosService } from '@core/services/proyectos.service';
 import { ServiciosService } from '@core/services/servicios.service';
 import { Boton } from '@shared/components/boton/boton';
-import { PersonaCard } from '@shared/components/persona-card/persona-card';
+import { EnConstruccion } from '@shared/components/en-construccion/en-construccion';
 
-/** /aboutus: quiénes somos. Habla sobre todo de omitl; el equipo va al final, más breve que en la home. */
+/** /aboutus: quiénes somos. Habla sobre todo de omitl; el equipo (aún en construcción) va al final. */
 @Component({
   selector: 'app-aboutus',
-  imports: [PersonaCard, Boton],
+  imports: [EnConstruccion, Boton],
   templateUrl: './aboutus.html',
   styleUrl: './aboutus.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,7 +16,6 @@ import { PersonaCard } from '@shared/components/persona-card/persona-card';
 export class AboutUs {
   private proyectosSvc = inject(ProyectosService);
 
-  personas = inject(EquipoService).personas;
   servicios = inject(ServiciosService).servicios;
   totalProyectos = this.proyectosSvc.totalProyectos;
   totalUsuarios = this.proyectosSvc.totalUsuarios;

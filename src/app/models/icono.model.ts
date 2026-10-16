@@ -18,4 +18,5 @@ export type NombreIcono =
   | 'linkedin'
   | 'verificado'
   | 'edificio'
+  | 'casa'
   | 'calculadora';

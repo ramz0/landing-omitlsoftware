@@ -16,16 +16,6 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.75rem; }
 .principios b, .servicios b { display: block; margin-bottom: 0.25rem; }
 .servicios { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 1.5rem; }
 
-/* Equipo: versión breve, tarjetas pequeñas centradas (sin animación). */
-.equipo { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
-.equipo > app-persona-card {
-  flex: 0 1 240px;
-  display: block;
-  overflow: hidden;
-  border: 1px solid #d6d6d2;
-  border-radius: 24px;
-}
-
 .cta { text-align: center; }
 .cta h2 { margin-bottom: 1.25rem; }
 
