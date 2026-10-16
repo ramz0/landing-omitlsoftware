@@ -16,4 +16,6 @@ export type NombreIcono =
   | 'instagram'
   | 'github'
   | 'linkedin'
-  | 'verificado';
+  | 'verificado'
+  | 'edificio'
+  | 'calculadora';

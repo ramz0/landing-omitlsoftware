@@ -16,7 +16,8 @@ nav {
 img { height: 40px; transition: height 0.25s ease; }
 
 .acciones { display: flex; align-items: center; gap: 1.5rem; }
-.enlace { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+
+.enlace { display: inline-flex; align-items: center; gap: 0.4rem; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
 .enlace:hover { color: var(--yellow); }
 
 .compacto nav { padding: 0.4rem 0; }
