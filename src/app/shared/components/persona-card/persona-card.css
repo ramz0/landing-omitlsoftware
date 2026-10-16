@@ -44,3 +44,11 @@ article.con-foto {
 h3 { font-size: 1.15rem; }
 .rol { font-size: 0.85rem; font-weight: 600; color: var(--jade); margin-bottom: 0.5rem; }
 app-redes-sociales { margin-top: 1rem; }
+
+/* Desktop: foto casi cuadrada y texto compacto para que quepan 5 en fila. */
+@media (min-width: 701px) {
+  .foto { aspect-ratio: 1 / 1; }
+  .con-foto .texto { padding: 0 0.9rem 1rem; }
+  h3 { font-size: 1rem; }
+  .bio { -webkit-line-clamp: 3; font-size: 0.82rem; }
+}

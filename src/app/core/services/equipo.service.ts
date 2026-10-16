@@ -39,6 +39,20 @@ export class EquipoService {
   readonly personas = signal<Persona[]>([]);
 
   constructor() {
+    if (environment.equipoPrueba) {
+      const foto = (c: string) =>
+        `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="${c}"/></svg>`)}`;
+      this.personas.set(
+        ['#2f6f5e', '#8a5a2b', '#3b4a8a', '#7a2f5a', '#555'].map((c, i) => ({
+          nombre: `Persona Prueba ${i + 1}`,
+          rol: 'Desarrollo',
+          descripcion: 'Texto de prueba para ver cómo cae la bio dentro de la tarjeta en desktop y móvil.',
+          foto: foto(c),
+          redes: redes({ instagram: '', github: '', linkedin: '' } as MiembroApi),
+        })),
+      );
+      return;
+    }
     inject(HttpClient)
       .get<MiembroApi[]>(`${environment.apiUrl}/api/equipo`)
       .subscribe({

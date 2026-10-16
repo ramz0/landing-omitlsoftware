@@ -1,4 +1,4 @@
-<section class="hero">
+<section class="hero" id="inicio">
   <app-lineas-velocidad />
   <div class="wrap">
     <h1>Tecnología a la medida que <span>sí se usa</span> todos los días.</h1>
@@ -41,15 +41,15 @@
       omitl software reúne en 2026 a profesionales del software con experiencia real en desarrollo.
       En esta era de la IA proponemos soluciones concretas, hechas por personas que saben construirlas.
     </p>
-    <div class="equipo" #equipo [class.visto]="equipoVisto()">
-      @for (p of personas(); track p.nombre) {
-        <app-persona-card [persona]="p" />
+    <div class="equipo" #equipo [class.visto]="equipoVisto()" [class.inv]="invertido()">
+      @for (p of personas(); track p.nombre; let i = $index) {
+        <app-persona-card [persona]="p" (mouseenter)="alternar(i)" />
       }
     </div>
   </div>
 </section>
 
-<section class="band">
+<section class="band" id="proceso">
   <div class="wrap">
     <h2>Cómo trabajamos</h2>
     <p class="lead">Un proceso corto, con entregas que puedes usar desde las primeras semanas.</p>
