@@ -15,7 +15,7 @@ article {
   border: 1px solid var(--stone);
   border-radius: 12px;
   overflow: hidden;
-  background: #fff;
+  background: var(--surface);
   min-width: 0;
 }
 .barra {
@@ -27,15 +27,15 @@ article {
   border-bottom: 1px solid var(--stone);
 }
 .luces { display: flex; gap: 0.35rem; flex: none; }
-.luces i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: #ff5f57; }
-.luces i:nth-child(2) { background: #febc2e; }
-.luces i:nth-child(3) { background: #28c840; }
+.luces i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--coral); }
+.luces i:nth-child(2) { background: var(--yellow); }
+.luces i:nth-child(3) { background: var(--jade); }
 .url {
   flex: 1;
   min-width: 0;
   padding: 0.2rem 0.75rem;
   border-radius: 999px;
-  background: #fff;
+  background: var(--surface);
   color: var(--night);
   font-size: 0.78rem;
   text-align: center;

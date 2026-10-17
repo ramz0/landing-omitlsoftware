@@ -5,6 +5,8 @@
   --mist: #f9f6eb;
   --lime: #f5e8bc;
   --stone: #e2d6ac;
+  --coral: #e2543f;
+  --surface: #fff;
 }
 
 * { box-sizing: border-box; margin: 0; }
