@@ -5,6 +5,8 @@ import { Categoria, Integrante, Proyecto, Tecnologia } from '@models/proyecto.mo
 import { environment } from '../../../environments/environment';
 
 const MAX_DESTACADOS = 5;
+/** Cada cuánto se vuelve a pedir la lista; la API la cachea 60 s, así que menos es inútil. */
+const REFRESCO_MS = 60_000;
 
 const LUIS: Integrante = { nombre: 'Luis Ramírez Durán', rol: 'Frontend y parte del backend' };
 const JAQUELIN: Integrante = { nombre: 'Jaquelin Barragán Marín', rol: 'Backend Node.js' };
@@ -96,6 +98,14 @@ export class ProyectosService {
   readonly proyectos = signal<Proyecto[]>(RESPALDO);
 
   constructor() {
+    this.cargar();
+    // Los totales del hero salen de esta lista: se refresca sola, sin recargar la página, y solo con la pestaña a la vista.
+    const alVer = () => document.visibilityState === 'visible' && this.cargar();
+    setInterval(alVer, REFRESCO_MS);
+    document.addEventListener('visibilitychange', alVer);
+  }
+
+  private cargar(): void {
     this.http.get<ProyectoApi[]>(`${environment.apiUrl}/api/proyectos`).subscribe({
       next: (lista) => {
         if (!lista.length) return; // sin publicados: se queda el respaldo
@@ -110,7 +120,7 @@ export class ProyectosService {
           })),
         );
       },
-      error: () => {}, // el respaldo ya está en pantalla
+      error: () => {}, // se queda lo que ya hay en pantalla
     });
   }
 
