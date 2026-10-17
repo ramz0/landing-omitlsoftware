@@ -22,7 +22,7 @@
       <h3>Servicios</h3>
       <ul>
         @for (s of servicios(); track s.id) {
-          <li><a routerLink="/" fragment="servicios">{{ s.nombre }}</a></li>
+          <li><a routerLink="/proyectos" [queryParams]="{ tipo: s.tipo }">{{ s.nombre }}</a></li>
         }
       </ul>
     </nav>

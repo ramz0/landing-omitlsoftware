@@ -44,6 +44,8 @@ export interface Proyecto {
 
 export interface Servicio {
   id: string;
+  /** Filtro de /proyectos al que lleva el servicio. */
+  tipo: Categoria;
   nombre: string;
   descripcion: string;
 }
