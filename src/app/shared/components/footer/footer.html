@@ -1,10 +1,44 @@
 <footer>
-  <div class="wrap">
-    <img src="logo.svg" alt="omitl software" />
-    <p>omitl software · México</p>
+  <div class="wrap grid">
+    <div class="marca">
+      <img src="logo.svg" alt="omitl software" />
+      <p>Software a la medida, sistemas y herramientas de venta para negocios en México.</p>
+      <a class="correo" [href]="'mailto:' + email">{{ email }}</a>
+    </div>
+
+    <nav aria-label="Navegación">
+      <h3>Sitio</h3>
+      <ul>
+        <li><a routerLink="/" fragment="inicio">Inicio</a></li>
+        <li><a routerLink="/proyectos">Proyectos</a></li>
+        <li><a routerLink="/" fragment="equipo">Equipo</a></li>
+        <li><a routerLink="/" fragment="proceso">Cómo trabajamos</a></li>
+        <li><a routerLink="/aboutus">Quiénes somos</a></li>
+        <li><a routerLink="/calculator">Calculadora de presupuesto</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Servicios">
+      <h3>Servicios</h3>
+      <ul>
+        @for (s of servicios(); track s.id) {
+          <li><a routerLink="/" fragment="servicios">{{ s.nombre }}</a></li>
+        }
+      </ul>
+    </nav>
+
+    <div>
+      <h3>¿Hablamos?</h3>
+      <p class="invita">Cuéntanos qué proceso quieres dejar de llevar en hojas de cálculo.</p>
+      <a class="cta" routerLink="/" fragment="contacto">Escríbenos</a>
+    </div>
+  </div>
+
+  <div class="wrap base">
+    <small>© {{ anio }} omitl software · México</small>
     <small>
-      © {{ anio }} omitl software. Los proyectos mostrados se presentan sin enlaces directos por
-      confidencialidad de sus operaciones.
+      Los proyectos mostrados se presentan sin enlaces directos por confidencialidad de sus
+      operaciones.
     </small>
   </div>
 </footer>
