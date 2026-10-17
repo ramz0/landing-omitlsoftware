@@ -6,10 +6,13 @@ a {
   font-weight: 600;
   padding: 0.55rem 1.1rem;
   border-radius: 999px;
+  transition: padding 0.25s ease, font-size 0.25s ease;
 }
 
 .amarillo { background: var(--yellow); color: var(--night); }
 .jade { background: var(--jade); color: #fff; padding: 0.8rem 1.4rem; }
+
+.amarillo.compacto { padding: 0.2rem 0.9rem; font-size: 0.85rem; }
 
 .icono { display: inline-flex; }
 
@@ -28,5 +31,6 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  a { transition: none; }
   .flota { animation: none; }
 }

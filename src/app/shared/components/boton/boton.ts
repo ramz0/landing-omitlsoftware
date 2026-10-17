@@ -18,7 +18,7 @@ const limitar = (v: number, max: number) => Math.max(-max, Math.min(max, v));
   selector: 'app-boton',
   imports: [Icono],
   template: `
-    <a [href]="href()" [class]="variante()">
+    <a [href]="href()" [class]="variante()" [class.compacto]="compacto()">
       @if (icono(); as nombre) {
         <span #iconoEl class="icono" [class.flota]="flota()"><app-icono [nombre]="nombre" /></span>
       }
@@ -34,6 +34,9 @@ export class Boton {
   icono = input<NombreIcono>();
   /** El ícono llega volando y después reacciona (poco) al scroll; quieto cuando no hay scroll. */
   flota = input(false);
+
+  /** Versión más delgada (el header la usa al hacer scroll). */
+  compacto = input(false);
 
   private iconoEl = viewChild<ElementRef<HTMLElement>>('iconoEl');
 
