@@ -31,20 +31,21 @@
     </p>
     <div class="carrusel" role="region" aria-roledescription="carrusel" aria-label="Proyectos en producción">
       <div class="pista" #pista tabindex="0" (scroll)="alDesplazar()">
-        @for (p of proyectos(); track p.id) {
+        @for (p of destacados(); track p.id) {
           <div class="slide"><app-proyecto-card [proyecto]="p" /></div>
         }
       </div>
       <div class="controles">
         <button type="button" class="flecha" aria-label="Proyecto anterior" [disabled]="actual() === 0" (click)="mover(-1)">‹</button>
         <div class="puntos">
-          @for (p of proyectos(); track p.id; let i = $index) {
+          @for (p of destacados(); track p.id; let i = $index) {
             <button type="button" [class.on]="i === actual()" [attr.aria-label]="'Ver ' + p.nombre" [attr.aria-current]="i === actual()" (click)="ir(i)"></button>
           }
         </div>
-        <button type="button" class="flecha" aria-label="Proyecto siguiente" [disabled]="actual() === proyectos().length - 1" (click)="mover(1)">›</button>
+        <button type="button" class="flecha" aria-label="Proyecto siguiente" [disabled]="actual() === destacados().length - 1" (click)="mover(1)">›</button>
       </div>
     </div>
+    <div class="mas"><app-boton href="/proyectos" variante="jade">Ver más proyectos</app-boton></div>
   </div>
 </section>
 

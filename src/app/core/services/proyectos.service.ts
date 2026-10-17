@@ -1,14 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 
-import { Integrante, Proyecto, Tecnologia } from '@models/proyecto.model';
+import { Categoria, Integrante, Proyecto, Tecnologia } from '@models/proyecto.model';
 import { environment } from '../../../environments/environment';
+
+const MAX_DESTACADOS = 5;
 
 const LUIS: Integrante = { nombre: 'Luis Ramírez Durán', rol: 'Frontend y parte del backend' };
 const JAQUELIN: Integrante = { nombre: 'Jaquelin Barragán Marín', rol: 'Backend Node.js' };
 
 /** Lo que devuelve GET /api/proyectos (proyectoPublico en api-cc-omitl); icono es texto libre. */
-interface ProyectoApi extends Omit<Proyecto, 'stack' | 'video'> {
+interface ProyectoApi extends Omit<Proyecto, 'stack' | 'video' | 'categoria'> {
+  categoria?: Categoria;
   stack: { nombre: string; icono?: string }[];
   video?: { src: string; poster: string };
 }
@@ -19,6 +22,7 @@ const RESPALDO: Proyecto[] = [
     id: 'mipaay',
     nombre: 'Oportunidades Paay Sistema',
     etiqueta: 'Operación financiera',
+    categoria: 'software',
     descripcion:
       'Software a la medida para gestionar los préstamos internos entre tesorería y mesa de operaciones, de modo que la operación continúa en sitio o a distancia.',
     stack: [
@@ -34,6 +38,7 @@ const RESPALDO: Proyecto[] = [
     id: 'themoneycenter',
     nombre: 'The Money Center',
     etiqueta: 'Productividad y agenda',
+    categoria: 'software',
     descripcion:
       'Software a la medida para reportar la productividad entre usuarios, registrar los trámites que cada uno carga y agendar citas con clientes.',
     stack: [
@@ -49,6 +54,7 @@ const RESPALDO: Proyecto[] = [
     id: 'oportunidadespaay',
     nombre: 'Oportunidades Paay',
     etiqueta: 'Presencia web',
+    categoria: 'landing',
     descripcion:
       'Landing page informativa que le da a la empresa una presencia profesional: quiénes son, sus productos, requisitos y formas de contacto.',
     stack: [
@@ -64,6 +70,7 @@ const RESPALDO: Proyecto[] = [
     id: 'vidrieriaramirez',
     nombre: 'Vidriería Ramírez',
     etiqueta: 'Catálogo web',
+    categoria: 'catalogo',
     descripcion:
       'Catálogo en línea para un negocio de cancelería y vidriería: más de 200 trabajos filtrables por tipo y acabado, ubicación, reseñas y cotización directa por WhatsApp.',
     stack: [
@@ -97,6 +104,7 @@ export class ProyectosService {
         this.proyectos.set(
           lista.map((p) => ({
             ...p,
+            categoria: p.categoria ?? 'software',
             stack: p.stack as Tecnologia[],
             video: p.video ? { src: abs(p.video.src), poster: abs(p.video.poster) } : undefined,
           })),
@@ -188,6 +196,8 @@ export class ProyectosService {
     },
   ]);
 
+  /** Los del carrusel de inicio: máximo 5, en el orden que define el sistema; el resto vive en /proyectos. */
+  readonly destacados = computed(() => this.proyectos().slice(0, MAX_DESTACADOS));
   readonly totalProyectos = computed(() => this.proyectos().length);
   readonly totalUsuarios = computed(() =>
     this.proyectos().reduce((suma, p) => suma + (p.usuarios ?? 0), 0),

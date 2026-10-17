@@ -19,4 +19,5 @@ export type NombreIcono =
   | 'verificado'
   | 'edificio'
   | 'casa'
-  | 'calculadora';
+  | 'calculadora'
+  | 'proyectos';

@@ -56,6 +56,7 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
   grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
 }
 
+.mas { display: flex; justify-content: center; margin-top: 1.75rem; }
 .nota {
   max-width: 60ch;
   margin-top: 0.75rem;

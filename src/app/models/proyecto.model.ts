@@ -14,10 +14,21 @@ export interface Integrante {
   rol: string;
 }
 
+/** Tipo de proyecto (el mismo que guarda el backend); filtra la página /proyectos. */
+export type Categoria = 'software' | 'landing' | 'tienda' | 'catalogo';
+
+export const CATEGORIAS: { id: Categoria; plural: string }[] = [
+  { id: 'software', plural: 'Software a la medida' },
+  { id: 'landing', plural: 'Landing pages' },
+  { id: 'tienda', plural: 'Tiendas en línea' },
+  { id: 'catalogo', plural: 'Catálogos web' },
+];
+
 export interface Proyecto {
   id: string;
   nombre: string;
   etiqueta: string;
+  categoria: Categoria;
   descripcion: string;
   stack: Tecnologia[];
   /** Usuarios registrados; ausente en proyectos sin usuarios (p. ej. un sitio informativo). */

@@ -4,6 +4,7 @@
     <div class="acciones">
       <div class="enlaces" [class.abierto]="abierto()" (click)="abierto.set(false)">
       <a class="enlace" routerLink="/" fragment="inicio"><app-icono nombre="casa" /> Inicio</a>
+      <a class="enlace" routerLink="/proyectos" routerLinkActive="activo"><app-icono nombre="proyectos" /> Proyectos</a>
       <a class="enlace" routerLink="/aboutus"><app-icono nombre="edificio" /> Quiénes somos</a>
       <a class="enlace" routerLink="/calculator"><app-icono nombre="calculadora" /> Calculadora de presupuesto</a>
       </div>

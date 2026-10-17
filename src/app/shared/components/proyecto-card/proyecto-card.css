@@ -1,3 +1,6 @@
+/* Contenedor de consultas: la tarjeta decide su layout por su propio ancho (carrusel ancho o cuadrícula angosta). */
+:host { display: block; height: 100%; container-type: inline-size; }
+
 article {
   height: 100%;
   background: #fff;
@@ -61,7 +64,7 @@ h3 { font-size: 1.25rem; }
 .meta b { color: var(--night); }
 
 /* Con video, la tarjeta es de ancho completo: video grande a la izquierda y texto a la derecha. */
-@media (min-width: 860px) {
+@container (min-width: 720px) {
   article.con-video {
     display: grid;
     grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);

@@ -21,7 +21,7 @@ img { height: 40px; transition: height 0.25s ease; }
 .enlaces { display: flex; align-items: center; gap: 1.5rem; }
 .menu { display: none; background: none; border: 0; color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; }
 .enlace { display: inline-flex; align-items: center; gap: 0.4rem; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-.enlace:hover { color: var(--yellow); }
+.enlace:hover, .enlace.activo { color: var(--yellow); }
 
 .compacto nav { padding: 0.4rem 0; }
 .compacto img { height: 28px; }

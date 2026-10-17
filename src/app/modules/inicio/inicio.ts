@@ -51,7 +51,7 @@ export class Inicio {
   }
 
   mover(d: number) {
-    this.ir(Math.min(Math.max(this.actual() + d, 0), this.proyectos().length - 1));
+    this.ir(Math.min(Math.max(this.actual() + d, 0), this.destacados().length - 1));
   }
 
   /** Pasa a true la primera vez que el equipo entra en pantalla y ya no vuelve a false. */
@@ -121,6 +121,7 @@ export class Inicio {
   personas = inject(EquipoService).personas;
   servicios = inject(ServiciosService).servicios;
   proyectos = this.proyectosSvc.proyectos;
+  destacados = this.proyectosSvc.destacados;
   tecnologias = this.proyectosSvc.tecnologias;
   totalProyectos = this.proyectosSvc.totalProyectos;
   totalUsuarios = this.proyectosSvc.totalUsuarios;

@@ -1,0 +1,43 @@
+<section class="pagina">
+  <div class="wrap">
+    <h1>Proyectos</h1>
+    <p class="lead">
+      Software a la medida, landing pages, tiendas y catálogos que ya están en operación. Filtra por
+      el tipo que te interese.
+    </p>
+    <p class="nota">
+      Para resguardar el software legítimo de nuestros clientes, en los sistemas a la medida no
+      revelamos dominios reales ni información real: los recorridos usan datos de ejemplo.
+    </p>
+
+    <nav class="filtros" aria-label="Filtrar proyectos por tipo">
+      <a
+        routerLink="/proyectos"
+        [class.activo]="filtro() === 'todos'"
+        [attr.aria-current]="filtro() === 'todos' ? 'page' : null"
+      >
+        Todos <span>{{ proyectos().length }}</span>
+      </a>
+      @for (t of tipos(); track t.id) {
+        <a
+          routerLink="/proyectos"
+          [queryParams]="{ tipo: t.id }"
+          [class.activo]="filtro() === t.id"
+          [attr.aria-current]="filtro() === t.id ? 'page' : null"
+        >
+          {{ t.plural }} <span>{{ t.total }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="cuadricula">
+      @for (p of visibles(); track p.id) {
+        <app-proyecto-card [proyecto]="p" />
+      } @empty {
+        <p class="vacio">
+          No hay proyectos de este tipo todavía. <a routerLink="/proyectos">Ver todos</a>
+        </p>
+      }
+    </div>
+  </div>
+</section>
