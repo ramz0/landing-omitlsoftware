@@ -1,56 +1,110 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { Integrante, Proyecto, Tecnologia } from '@models/proyecto.model';
+import { environment } from '../../../environments/environment';
 
 const LUIS: Integrante = { nombre: 'Luis Ramírez Durán', rol: 'Frontend y parte del backend' };
 const JAQUELIN: Integrante = { nombre: 'Jaquelin Barragán Marín', rol: 'Backend Node.js' };
 
-/** Proyectos en producción que se muestran en la landing. Sin URLs a propósito (confidencialidad). */
+/** Lo que devuelve GET /api/proyectos (proyectoPublico en api-cc-omitl); icono es texto libre. */
+interface ProyectoApi extends Omit<Proyecto, 'stack' | 'video'> {
+  stack: { nombre: string; icono?: string }[];
+  video?: { src: string; poster: string };
+}
+
+/** Respaldo: se muestra mientras carga la API y si ésta falla o aún no tiene proyectos publicados. */
+const RESPALDO: Proyecto[] = [
+  {
+    id: 'mipaay',
+    nombre: 'Oportunidades Paay Sistema',
+    etiqueta: 'Operación financiera',
+    descripcion:
+      'Software a la medida para gestionar los préstamos internos entre tesorería y mesa de operaciones, de modo que la operación continúa en sitio o a distancia.',
+    stack: [
+      { nombre: 'Angular 21', icono: 'angular' },
+      { nombre: 'Node.js', icono: 'nodejs' },
+    ],
+    usuarios: 9,
+    desde: '2025-10-13',
+    equipo: [LUIS, JAQUELIN],
+    video: { src: 'proyectos/mipaay.mp4', poster: 'proyectos/mipaay.jpg' },
+  },
+  {
+    id: 'themoneycenter',
+    nombre: 'The Money Center',
+    etiqueta: 'Productividad y agenda',
+    descripcion:
+      'Software a la medida para reportar la productividad entre usuarios, registrar los trámites que cada uno carga y agendar citas con clientes.',
+    stack: [
+      { nombre: 'Angular 21', icono: 'angular' },
+      { nombre: 'Go', icono: 'go' },
+    ],
+    usuarios: 115,
+    desde: '2026-06-01',
+    equipo: [{ nombre: LUIS.nombre, rol: 'Desarrollo completo' }],
+    video: { src: 'proyectos/themoneycenter.mp4', poster: 'proyectos/themoneycenter.jpg' },
+  },
+  {
+    id: 'oportunidadespaay',
+    nombre: 'Oportunidades Paay',
+    etiqueta: 'Presencia web',
+    descripcion:
+      'Landing page informativa que le da a la empresa una presencia profesional: quiénes son, sus productos, requisitos y formas de contacto.',
+    stack: [
+      { nombre: 'Angular 21', icono: 'angular' },
+      { nombre: 'Diseño adaptado a cualquier dispositivo' },
+    ],
+    desde: '2026-04-08',
+    equipo: [LUIS, JAQUELIN],
+    video: { src: 'proyectos/oportunidadespaay.mp4', poster: 'proyectos/oportunidadespaay.jpg' },
+    dominio: 'www.paayoportunidades.com',
+  },
+  {
+    id: 'vidrieriaramirez',
+    nombre: 'Vidriería Ramírez',
+    etiqueta: 'Catálogo web',
+    descripcion:
+      'Catálogo en línea para un negocio de cancelería y vidriería: más de 200 trabajos filtrables por tipo y acabado, ubicación, reseñas y cotización directa por WhatsApp.',
+    stack: [
+      { nombre: 'Angular 21', icono: 'angular' },
+      { nombre: 'Diseño adaptado a cualquier dispositivo' },
+    ],
+    desde: '2026-10-11',
+    equipo: [{ nombre: LUIS.nombre, rol: 'Desarrollo completo' }],
+    video: { src: 'proyectos/vidrieriaramirez.mp4', poster: 'proyectos/vidrieriaramirez.jpg' },
+    dominio: 'catalogo-vr.luis-syber.workers.dev',
+  },
+];
+
+/**
+ * Proyectos en producción que se muestran en la landing. Se administran desde el sistema
+ * (cc.omitlsoftware.com.mx → Proyectos web); solo los sitios web públicos llevan `dominio`,
+ * el software a la medida no (confidencialidad).
+ */
 @Injectable({ providedIn: 'root' })
 export class ProyectosService {
-  readonly proyectos = signal<Proyecto[]>([
-    {
-      id: 'mipaay',
-      nombre: 'Mi Paay',
-      etiqueta: 'Operación financiera',
-      descripcion:
-        'Software a la medida para gestionar los préstamos internos entre tesorería y mesa de operaciones, de modo que la operación continúa en sitio o a distancia.',
-      stack: [
-        { nombre: 'Angular 21', icono: 'angular' },
-        { nombre: 'Node.js', icono: 'nodejs' },
-      ],
-      usuarios: 9,
-      desde: '2025-10-13',
-      equipo: [LUIS, JAQUELIN],
-    },
-    {
-      id: 'themoneycenter',
-      nombre: 'The Money Center',
-      etiqueta: 'Productividad y agenda',
-      descripcion:
-        'Software a la medida para reportar la productividad entre usuarios, registrar los trámites que cada uno carga y agendar citas con clientes.',
-      stack: [
-        { nombre: 'Angular 21', icono: 'angular' },
-        { nombre: 'Go', icono: 'go' },
-      ],
-      usuarios: 115,
-      desde: '2026-06-01',
-      equipo: [{ nombre: LUIS.nombre, rol: 'Desarrollo completo' }],
-    },
-    {
-      id: 'oportunidadespaay',
-      nombre: 'Oportunidades Paay',
-      etiqueta: 'Presencia web',
-      descripcion:
-        'Landing page informativa que le da a la empresa una presencia profesional: quiénes son, sus productos, requisitos y formas de contacto.',
-      stack: [
-        { nombre: 'Angular 21', icono: 'angular' },
-        { nombre: 'Diseño adaptado a cualquier dispositivo' },
-      ],
-      desde: '2026-04-08',
-      equipo: [LUIS, JAQUELIN],
-    },
-  ]);
+  private http = inject(HttpClient);
+
+  readonly proyectos = signal<Proyecto[]>(RESPALDO);
+
+  constructor() {
+    this.http.get<ProyectoApi[]>(`${environment.apiUrl}/api/proyectos`).subscribe({
+      next: (lista) => {
+        if (!lista.length) return; // sin publicados: se queda el respaldo
+        // Los archivos vienen como ruta relativa a la API.
+        const abs = (r: string) => (r ? environment.apiUrl + r : r);
+        this.proyectos.set(
+          lista.map((p) => ({
+            ...p,
+            stack: p.stack as Tecnologia[],
+            video: p.video ? { src: abs(p.video.src), poster: abs(p.video.poster) } : undefined,
+          })),
+        );
+      },
+      error: () => {}, // el respaldo ya está en pantalla
+    });
+  }
 
   /** Tecnologías con las que trabajamos (sección "Stack de tecnologías"). */
   readonly tecnologias = signal<Tecnologia[]>([
@@ -58,13 +112,13 @@ export class ProyectosService {
       nombre: 'Angular',
       icono: 'angular',
       atajo: 'A',
-      uso: 'Interfaces de nuestros sistemas (Mi Paay, The Money Center, Oportunidades Paay): componentes standalone, signals y rutas con carga diferida.',
+      uso: 'Interfaces de nuestros sistemas (Oportunidades Paay Sistema, The Money Center, Oportunidades Paay): componentes standalone, signals y rutas con carga diferida.',
     },
     {
       nombre: 'Node.js',
       icono: 'nodejs',
       atajo: 'N',
-      uso: 'Backend de Mi Paay: API REST, autenticación y la lógica de negocio del sistema.',
+      uso: 'Backend de Oportunidades Paay Sistema: API REST, autenticación y la lógica de negocio del sistema.',
     },
     {
       nombre: 'Go',

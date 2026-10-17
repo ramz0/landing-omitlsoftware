@@ -56,6 +56,40 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
   grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
 }
 
+.nota {
+  max-width: 60ch;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.65;
+}
+.carrusel { margin-top: 1.5rem; }
+.pista {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: 18px;
+}
+.pista::-webkit-scrollbar { display: none; }
+.pista:focus-visible { outline: 2px solid var(--jade); outline-offset: 4px; }
+.slide { flex: 0 0 100%; scroll-snap-align: start; min-width: 0; }
+.controles { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.25rem; }
+.flecha {
+  width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  border: 1px solid var(--stone); background: #fff; color: var(--night);
+  font-size: 1.5rem; line-height: 1; cursor: pointer;
+}
+.flecha:hover:not(:disabled) { background: var(--yellow); }
+.flecha:disabled { opacity: 0.35; cursor: default; }
+.puntos { display: flex; gap: 0.5rem; }
+.puntos button {
+  width: 0.65rem; height: 0.65rem; padding: 0; border-radius: 50%;
+  border: 0; background: var(--stone); cursor: pointer;
+}
+.puntos button.on { background: var(--jade); width: 1.6rem; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) { .pista { scroll-behavior: auto; } }
+
 .band { background: var(--jade); color: #fff; }
 .band .lead { color: var(--lime); opacity: 1; }
 .steps {

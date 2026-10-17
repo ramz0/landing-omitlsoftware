@@ -1,25 +1,52 @@
-<article>
-  <app-badge-pixel>{{ proyecto().etiqueta }}</app-badge-pixel>
-  <h3>{{ proyecto().nombre }}</h3>
-  <p>{{ proyecto().descripcion }}</p>
+<article [class.con-video]="!!proyecto().video">
+  @if (proyecto().video; as v) {
+    <div class="marco">
+      <div class="barra">
+        <span class="luces" aria-hidden="true"><i></i><i></i><i></i></span>
+        @if (proyecto().dominio; as d) {
+          <a class="url" [href]="'https://' + d" target="_blank" rel="noopener" [attr.aria-label]="'Abrir ' + d + ' en otra pestaña'">
+            {{ d }} <span aria-hidden="true">↗</span>
+          </a>
+        } @else {
+          <span class="url">dominio.ejemplo.com.mx</span>
+        }
+      </div>
+      <video
+        class="demo"
+        [src]="v.src"
+        [poster]="v.poster"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        [attr.aria-label]="'Recorrido de ' + proyecto().nombre"
+      ></video>
+    </div>
+  }
+  <div class="info">
+    <app-badge-pixel>{{ proyecto().etiqueta }}</app-badge-pixel>
+    <h3>{{ proyecto().nombre }}</h3>
+    <p>{{ proyecto().descripcion }}</p>
 
-  <ul class="chips" aria-label="Tecnologías">
-    @for (t of proyecto().stack; track t.nombre) {
-      <li><app-tecnologia [tecnologia]="t" /></li>
-    }
-  </ul>
+    <ul class="chips" aria-label="Tecnologías">
+      @for (t of proyecto().stack; track t.nombre) {
+        <li><app-tecnologia [tecnologia]="t" /></li>
+      }
+    </ul>
 
-  <div class="meta">
-    @if (proyecto().usuarios; as usuarios) {
-      <p>
-        <b>{{ usuarios }} usuarios registrados</b> · en operación desde
-        {{ proyecto().desde | mesAnio }}
-      </p>
-    } @else {
-      <p>En línea desde {{ proyecto().desde | mesAnio }}</p>
-    }
-    @for (p of proyecto().equipo; track p.nombre) {
-      <p>{{ p.nombre }} — {{ p.rol }}</p>
-    }
+    <div class="meta">
+      @if (proyecto().usuarios; as usuarios) {
+        <p>
+          <b>{{ usuarios }} usuarios registrados</b> · en operación desde
+          {{ proyecto().desde | mesAnio }}
+        </p>
+      } @else {
+        <p>En línea desde {{ proyecto().desde | mesAnio }}</p>
+      }
+      @for (p of proyecto().equipo; track p.nombre) {
+        <p>{{ p.nombre }} — {{ p.rol }}</p>
+      }
+    </div>
   </div>
 </article>

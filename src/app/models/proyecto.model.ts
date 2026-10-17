@@ -25,6 +25,10 @@ export interface Proyecto {
   /** Fecha ISO (yyyy-MM-dd) en que entró en operación. */
   desde: string;
   equipo: Integrante[];
+  /** Recorrido en video del sistema (con datos ficticios), ruta bajo `public/`. Sin él, la tarjeta no lleva video. */
+  video?: { src: string; poster: string };
+  /** Solo sitios web públicos (landings, tiendas): se muestra con enlace en la barra del marco. El software a la medida no lleva dominio. */
+  dominio?: string;
 }
 
 export interface Servicio {

@@ -9,6 +9,44 @@ article {
   gap: 0.75rem;
 }
 
+.info { display: flex; flex-direction: column; gap: 0.75rem; flex: 1; }
+
+.marco {
+  border: 1px solid var(--stone);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  min-width: 0;
+}
+.barra {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--stone);
+  border-bottom: 1px solid var(--stone);
+}
+.luces { display: flex; gap: 0.35rem; flex: none; }
+.luces i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: #ff5f57; }
+.luces i:nth-child(2) { background: #febc2e; }
+.luces i:nth-child(3) { background: #28c840; }
+.url {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--night);
+  font-size: 0.78rem;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+a.url:hover { background: var(--yellow); }
+.demo { display: block; width: 100%; aspect-ratio: 1350 / 550; object-fit: cover; background: var(--stone); }
+
 h3 { font-size: 1.25rem; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; }
@@ -21,3 +59,14 @@ h3 { font-size: 1.25rem; }
   opacity: 0.85;
 }
 .meta b { color: var(--night); }
+
+/* Con video, la tarjeta es de ancho completo: video grande a la izquierda y texto a la derecha. */
+@media (min-width: 860px) {
+  article.con-video {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: center;
+    padding: 1.75rem;
+  }
+}

@@ -35,6 +35,24 @@ import { ProyectoCard } from '@shared/components/proyecto-card/proyecto-card';
 export class Inicio {
   private proyectosSvc = inject(ProyectosService);
   private equipoEl = viewChild<ElementRef<HTMLElement>>('equipo');
+  private pista = viewChild<ElementRef<HTMLElement>>('pista');
+
+  /** Índice del proyecto visible en el carrusel (sale del scroll, así el swipe táctil también lo actualiza). */
+  actual = signal(0);
+
+  alDesplazar() {
+    const el = this.pista()?.nativeElement;
+    if (el) this.actual.set(Math.round(el.scrollLeft / el.clientWidth));
+  }
+
+  ir(i: number) {
+    const el = this.pista()?.nativeElement;
+    el?.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
+  }
+
+  mover(d: number) {
+    this.ir(Math.min(Math.max(this.actual() + d, 0), this.proyectos().length - 1));
+  }
 
   /** Pasa a true la primera vez que el equipo entra en pantalla y ya no vuelve a false. */
   equipoVisto = signal(false);
