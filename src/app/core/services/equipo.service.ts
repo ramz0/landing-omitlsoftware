@@ -16,10 +16,10 @@ interface MiembroApi {
 }
 
 const ROLES: Record<string, string> = {
-  product_owner: 'Fundador',
+  product_owner: 'Product Owner',
   sistemas: 'Sistemas',
   scrum_master: 'Scrum Master',
-  direccion_marketing: 'Dirección de marketing',
+  direccion_marketing: 'Dirección de marketing · Scrum Master',
   dev: 'Desarrollo',
   asistente_marketing: 'Marketing',
 };
