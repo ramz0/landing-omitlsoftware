@@ -61,7 +61,7 @@ const RESPALDO: Proyecto[] = [
       'Landing page informativa que le da a la empresa una presencia profesional: quiénes son, sus productos, requisitos y formas de contacto.',
     stack: [
       { nombre: 'Angular 21', icono: 'angular' },
-      { nombre: 'Diseño adaptado a cualquier dispositivo' },
+      { nombre: 'Adaptado a celular, tablet, PC', icono: 'responsivo' },
     ],
     desde: '2026-04-08',
     equipo: [LUIS, JAQUELIN],
@@ -77,7 +77,7 @@ const RESPALDO: Proyecto[] = [
       'Catálogo en línea para un negocio de cancelería y vidriería: más de 200 trabajos filtrables por tipo y acabado, ubicación, reseñas y cotización directa por WhatsApp.',
     stack: [
       { nombre: 'Angular 21', icono: 'angular' },
-      { nombre: 'Diseño adaptado a cualquier dispositivo' },
+      { nombre: 'Adaptado a celular, tablet, PC', icono: 'responsivo' },
     ],
     desde: '2026-10-11',
     equipo: [{ nombre: LUIS.nombre, rol: 'Desarrollo completo' }],

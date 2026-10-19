@@ -20,4 +20,5 @@ export type NombreIcono =
   | 'edificio'
   | 'casa'
   | 'calculadora'
-  | 'proyectos';
+  | 'proyectos'
+  | 'responsivo';
