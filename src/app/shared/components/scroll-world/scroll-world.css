@@ -1,6 +1,6 @@
 :host { display: block; height: 800vh; background: #020306; }
 .escena {
-  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
   /* El mismo fondo oscuro azulado del stack de tecnologías. */
   background: radial-gradient(ellipse 60% 45% at 50% 30%, #0b1220, #020306 75%), #020306;
 }
@@ -20,3 +20,20 @@ p { margin-top: 0.5rem; color: #cfe; }
 .esqueleto { position: absolute; inset: 0; background: linear-gradient(110deg, #020306 30%, #0b1220 50%, #020306 70%) 0 0 / 200% 100%; animation: brillo 1.4s linear infinite; }
 @keyframes brillo { to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .esqueleto { animation: none; } }
+
+/* Cierre solo móvil: sustituye a la salida de cámara de la sala 3D. */
+.cierre { display: none; }
+@media (max-width: 700px) {
+  .cierre {
+    position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 1rem;
+    padding: 2rem 1.5rem; text-align: center; color: #fff; pointer-events: none;
+    background: radial-gradient(ellipse 90% 60% at 50% 40%, var(--jade), #061a1a 80%);
+    opacity: 0; transition: opacity 0.5s;
+  }
+  .cierre.visible { opacity: 1; pointer-events: auto; }
+  .cierre h2 { text-shadow: 0 0 24px #f3c64955; }
+  .cierre a {
+    padding: 0.8rem 2rem; border-radius: 999px; color: var(--night); background: var(--yellow);
+    font-weight: 700; text-decoration: none; box-shadow: 0 0 24px #f3c64966;
+  }
+}

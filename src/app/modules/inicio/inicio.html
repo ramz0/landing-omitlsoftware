@@ -50,7 +50,11 @@
 </section>
 
 <!-- El título "Stack de tecnologías" (id="tecnologias") vive dentro de app-escritorio. -->
-<app-escritorio [tecnologias]="tecnologias()" />
+@if (movil) {
+  <app-stack-movil [tecnologias]="tecnologias()" />
+} @else {
+  <app-escritorio [tecnologias]="tecnologias()" />
+}
 
 <section id="equipo">
   <div class="wrap">

@@ -1,0 +1,15 @@
+<section id="tecnologias">
+  <div class="wrap">
+    <h2>Stack de tecnologías</h2>
+    <p class="lead">Con qué construimos: elegimos la herramienta según lo que cada proyecto necesita. Toca una para ver cómo la usamos.</p>
+<div class="rejilla" #rejilla>
+  @for (t of tecnologias(); track t.nombre; let i = $index) {
+    <button type="button" class="tarjeta" [class.ancha]="i % 5 === 0" aria-expanded="false">
+      <span class="icono">@if (t.icono; as ic) { <app-icono [nombre]="ic" /> }</span>
+      <b>{{ t.nombre }}</b>
+      <small>{{ t.uso }}</small>
+    </button>
+  }
+</div>
+  </div>
+</section>

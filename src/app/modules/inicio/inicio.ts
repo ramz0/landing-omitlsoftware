@@ -23,11 +23,12 @@ import { ScrollWorld } from '@shared/components/scroll-world/scroll-world';
 import { PersonaCard } from '@shared/components/persona-card/persona-card';
 import { NavNodos } from '@shared/components/nav-nodos/nav-nodos';
 import { Escritorio } from '@shared/components/escritorio/escritorio';
+import { StackMovil } from '@shared/components/stack-movil/stack-movil';
 import { ProyectoCard } from '@shared/components/proyecto-card/proyecto-card';
 
 @Component({
   selector: 'app-inicio',
-  imports: [LineasVelocidad, ScrollWorld, ProyectoCard, PersonaCard, Escritorio, Boton, NavNodos, FormContacto],
+  imports: [LineasVelocidad, ScrollWorld, ProyectoCard, PersonaCard, Escritorio, StackMovil, Boton, NavNodos, FormContacto],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -123,6 +124,8 @@ export class Inicio {
   proyectos = this.proyectosSvc.proyectos;
   destacados = this.proyectosSvc.destacados;
   tecnologias = this.proyectosSvc.tecnologias;
+  /** Teclado 3D en desktop, mosaico 2D en pantallas angostas (se decide al cargar). */
+  movil = typeof matchMedia !== 'undefined' && matchMedia('(max-width: 700px)').matches;
   totalProyectos = this.proyectosSvc.totalProyectos;
   totalUsuarios = this.proyectosSvc.totalUsuarios;
   desdeAnio = this.proyectosSvc.desdeAnio;

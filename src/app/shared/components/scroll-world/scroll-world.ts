@@ -33,6 +33,8 @@ const ESCENAS: Escena[] = [
 const SEPARACION = 16;
 /** Hasta qué avance del scroll dura el vuelo por el mundo; el resto es la cámara saliendo del monitor. */
 const FIN_MUNDO = 0.72;
+/** En móvil no hay salida de cámara: el vuelo ocupa casi todo el scroll y cierra una tarjeta CSS. */
+const FIN_MUNDO_MOVIL = 0.86;
 
 const suave = (a: number, b: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -79,7 +81,8 @@ export class ScrollWorld {
   private iniciar(): () => void {
     const canvas = this.canvas().nativeElement;
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const movil = matchMedia('(max-width: 700px)').matches;
+    renderer.setPixelRatio(Math.min(devicePixelRatio, movil ? 1.5 : 2));
 
     // ---- Mundo neón: se renderiza a una textura que es la pantalla del televisor ----
     // En pantallas verticales (móvil) el monitor también es vertical y el mundo se compone para ese formato.
@@ -207,7 +210,7 @@ export class ScrollWorld {
     const carcasaKb = new THREE.Mesh(new RoundedBoxGeometry(16, 0.9, largoKb + 1, 3, 0.08), mat(0x0b0b0c, 0.9));
     carcasaKb.position.y = -0.5;
     teclado.add(carcasaKb);
-    FILAS_KB.forEach((fila, f) => {
+    (movil ? [] : FILAS_KB).forEach((fila, f) => { // ponytail: en móvil la sala no se ve, sin teclas decorativas
       let x = -7.5;
       fila.forEach((ancho) => {
         const k = new THREE.Mesh(keycap(ancho), matTecla);
@@ -311,7 +314,8 @@ export class ScrollWorld {
       progreso += (objetivo - progreso) * 0.08;
 
       // 1) El mundo vuela dentro de la pantalla.
-      const pm = Math.min(1, progreso / FIN_MUNDO);
+      const fin = movil ? FIN_MUNDO_MOVIL : FIN_MUNDO;
+      const pm = Math.min(1, progreso / fin);
       camMundo.position.copy(curva.getPoint(pm));
       // Mira a lo largo de la tangente: en el último punto un lookAt al siguiente punto sería degenerado.
       camMundo.lookAt(camMundo.position.clone().add(curva.getTangent(pm)));
@@ -324,7 +328,7 @@ export class ScrollWorld {
       renderer.setRenderTarget(null);
 
       // 2) Al final la cámara sale del monitor: se aleja y revela el monitor completo.
-      const salida = suave(FIN_MUNDO - 0.08, 1, progreso);
+      const salida = movil ? 0 : suave(FIN_MUNDO - 0.08, 1, progreso);
       // Se aleja lo justo para ver el bisel del monitor, sin llegar a la base.
       // Termina ladeada y un poco baja, como en la foto del hero.
       camSala.position.set(-salida * 2.5, -salida * 2, dCerca * (1 + salida * 1.15));
@@ -333,7 +337,7 @@ export class ScrollWorld {
       luz.intensity = 650 * (0.75 + 0.25 * Math.sin(t * 31) * Math.sin(t * 7.3));
       renderer.render(sala, camSala);
 
-      const idx = salida > 0.15 ? -1 : Math.round(pm * (ESCENAS.length - 1));
+      const idx = (movil ? progreso > fin + 0.02 : salida > 0.15) ? -1 : Math.round(pm * (ESCENAS.length - 1));
       if (idx !== this.actual()) this.actual.set(idx);
       raf = requestAnimationFrame(tick);
     };
