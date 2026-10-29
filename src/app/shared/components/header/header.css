@@ -3,7 +3,12 @@ header {
   top: 0;
   z-index: 10;
   background: var(--night);
+  transition: background 0.25s ease, backdrop-filter 0.25s ease;
 }
+
+/* Inicio: transparente sobre el hero; con scroll (compacto) pasa a vidrio para leerse sobre cualquier fondo. */
+.flotante { position: fixed; inset: 0 0 auto; background: transparent; }
+.compacto { background: rgb(10 41 41 / 0.82); backdrop-filter: blur(10px); }
 
 nav {
   display: flex;

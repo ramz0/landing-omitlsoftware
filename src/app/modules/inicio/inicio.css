@@ -3,46 +3,156 @@ section { padding: 4rem 0; }
 h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
 .lead { max-width: 60ch; opacity: 0.75; }
 
-.hero {
+/* Hero = escena fija (sticky) que dura ~2 pantallas de scroll. Fase 1: el globo crece y se centra mientras
+   el texto se va. Fase 2: los servicios entran en órbita. Capas de lejos a cerca; todo con CSS scroll-driven
+   (compositor, sin JS). Sin soporte o con movimiento reducido: hero normal de una pantalla. */
+.hero { position: relative; background: #061a1a; color: var(--lime); }
+.escena {
   position: relative;
   isolation: isolate;
-  background-color: var(--night);
-  color: var(--lime);
-  padding: 4.5rem 0 5rem;
+  overflow: clip;
   min-height: min(82vh, 680px);
+  padding: 8.5rem 0 5rem; /* el header flota encima */
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  --g: min(64vw, 780px, 84vh); /* nunca más alto que la pantalla: centrado se ve completo */
+  background-color: var(--night);
 }
 
-/* Foto del escritorio de fondo (AVIF con WebP de respaldo), pegada a la derecha y con los bordes
-   desvanecidos para que se funda con el verde noche. */
-.hero::before {
+/* 1. Luz de fondo (la más lejana). */
+.escena::before {
   content: '';
   position: absolute;
-  inset: 0 0 0 auto;
-  aspect-ratio: 1 / 1;
-  z-index: -1;
-  background: image-set(url('/hero.avif') type('image/avif'), url('/hero.webp') type('image/webp'))
-    center 75% / auto 150% no-repeat;
-  mask-image: linear-gradient(90deg, transparent, #000 45%), linear-gradient(180deg, transparent, #000 22%);
-  mask-composite: intersect;
+  inset: -10% 0;
+  z-index: -3;
+  background:
+    radial-gradient(ellipse 50% 70% at 72% 50%, #0a4a4a66, transparent 70%),
+    linear-gradient(180deg, #061a1a, var(--night) 60%);
+  translate: calc(var(--mx, 0) * 6px) calc(var(--my, 0) * 4px);
+  transition: translate 0.6s ease-out;
 }
 
-.hero .wrap { position: relative; z-index: 1; width: min(1080px, 100% - 2.5rem); }
+/* 2. Suelo de retícula en perspectiva: como una pista técnica que se aleja hacia el horizonte. */
+.escena::after {
+  content: '';
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  bottom: -5%;
+  height: 55%;
+  z-index: -2;
+  background:
+    repeating-linear-gradient(90deg, #5fb3b226 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(0deg, #5fb3b226 0 1px, transparent 1px 72px);
+  mask-image: linear-gradient(0deg, #000 10%, transparent 90%);
+  transform: perspective(500px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  translate: calc(var(--mx, 0) * 12px) 0;
+  transition: translate 0.6s ease-out;
+}
 
-@media (max-width: 640px) {
-  .hero::before {
-    inset: 0;
-    aspect-ratio: auto;
-    opacity: 0.35;
-    mask-image: none;
-    background-position: 62% center;
-    background-size: auto 112%;
+/* 3. El globo. */
+.escena .globo {
+  position: absolute;
+  z-index: -1;
+  right: -10vw;
+  top: 0;
+  bottom: 0;
+  margin-block: auto;
+  width: var(--g);
+  height: var(--g);
+  translate: calc(var(--mx, 0) * -18px) calc(var(--my, 0) * -12px);
+  transition: translate 0.6s ease-out;
+}
+
+/* Servicios: por defecto (móvil, sin scroll CSS o movimiento reducido) una rejilla normal bajo el texto;
+   en escritorio con scroll CSS pasan a órbita alrededor del globo (ver el bloque de abajo). */
+.orbita {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.75rem;
+  width: min(1080px, 100% - 2.5rem);
+  margin-top: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+.orbita a {
+  display: block;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #5fb3b244;
+  border-radius: 0.8rem;
+  background: #04121299;
+  backdrop-filter: blur(8px);
+  color: var(--lime);
+  text-decoration: none;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  transition: border-color 0.2s, background 0.2s;
+}
+.orbita a:hover { border-color: var(--yellow); background: #041212cc; }
+.orbita b { display: block; color: #fff; font-size: 0.95rem; }
+.orbita small { opacity: 0.75; }
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 801px) {
+  @supports (animation-timeline: scroll()) {
+    .hero { height: 280vh; } /* 140vh de animación + 40vh de pausa con todo visible */
+    .escena { position: sticky; top: 0; height: 100vh; min-height: 0; padding-block: 0; }
+    /* La lista cubre toda la escena: así el 50 % de cada tarjeta es el centro del globo, no el de la lista. */
+    .orbita { display: block; position: absolute; inset: 0; width: auto; margin: 0; pointer-events: none; }
+    .orbita li { pointer-events: auto; }
+    .orbita li {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(15rem, 30vw);
+      --rx: min(36vw, 520px);
+      --ry: 24vh;
+      translate: calc(-50% + var(--x) * var(--rx)) calc(-50% + var(--y) * var(--ry));
+    }
+    /* Todo el recorrido de la escena: 0 → 140vh de scroll; la escena sigue fija hasta 180vh (280vh - 100vh). */
+    .escena::before, .escena::after, .escena .globo, .escena app-lineas-velocidad, .escena .wrap, .orbita li {
+      animation-timeline: scroll(root);
+      animation-range: 0 140vh;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+    }
+    .escena::before { animation-name: p-luz; }
+    .escena::after { animation-name: p-suelo; }
+    .escena .globo { animation-name: p-globo; transform-origin: 50% 50%; }
+    .escena app-lineas-velocidad { animation-name: p-lineas; }
+    .escena .wrap { animation-name: p-texto; }
+    .orbita li { animation-name: p-servicio; animation-range: calc(50vh + var(--i) * 12vh) calc(75vh + var(--i) * 12vh); }
+
+    /* Arranca grande y recortado a la derecha (hero); viaja al centro encogiendo hasta verse COMPLETO
+       (escala 1 = --g, que cabe en pantalla) y se asienta un poco más pequeño para dejar sitio a los servicios.
+       El centro final es 50vw: centro actual (110vw - g/2) + desplazamiento (g/2 - 60vw). */
+    @keyframes p-globo {
+      0% { transform: translate(0, 0) scale(1.25); }
+      40% { transform: translate(calc(var(--g) / 2 - 60vw), 0) scale(1); }
+      100% { transform: translate(calc(var(--g) / 2 - 60vw), 0) scale(0.92); }
+    }
+    @keyframes p-texto { 0% { transform: none; opacity: 1; } 28% { transform: translateY(-10vh); opacity: 0; } 100% { transform: translateY(-10vh); opacity: 0; } }
+    @keyframes p-luz { to { transform: translateY(8vh) scale(1.25); } }
+    @keyframes p-suelo { 0% { transform: perspective(500px) rotateX(62deg) translateY(0); } 100% { transform: perspective(500px) rotateX(62deg) translateY(160px); } }
+    @keyframes p-lineas { 0% { opacity: 1; } 30%, 100% { opacity: 0; } }
+    @keyframes p-servicio { from { opacity: 0; scale: 0.55; filter: blur(8px); } to { opacity: 1; scale: 1; filter: blur(0); } }
   }
 }
-.hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1; max-width: 18ch; color: #fff; }
-.hero h1 span { color: var(--yellow); }
-.hero p { margin-top: 1.25rem; max-width: 56ch; font-size: 1.1rem; }
+@media (max-width: 800px) {
+  .escena { --g: 110vw; }
+  .escena .globo { right: -30vw; opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) { .escena *, .escena::before, .escena::after { transition: none !important; translate: none !important; } }
+
+.escena .wrap { position: relative; z-index: 1; pointer-events: none; width: min(1080px, 100% - 2.5rem); }
+.escena .wrap > * { pointer-events: auto; }
+.escena h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1; max-width: 18ch; color: #fff; }
+.escena h1 span { color: var(--yellow); }
+.escena .wrap p { margin-top: 1.25rem; max-width: 56ch; font-size: 1.1rem; }
 
 .stats { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-top: 2.5rem; }
 .stats div { display: flex; flex-direction: column-reverse; }

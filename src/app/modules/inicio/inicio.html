@@ -1,23 +1,32 @@
 <app-nav-nodos />
 
 <section class="hero" id="inicio">
-  <app-lineas-velocidad />
-  <div class="wrap">
-    <h1>Tecnología a la medida que <span>sí se usa</span> todos los días.</h1>
-    <p>
-      Portales web, software a la medida, apps móviles, agentes de llamadas, tiendas online y punto
-      de venta: diseñamos, construimos y mantenemos las herramientas digitales que tu negocio
-      necesita.
-    </p>
-    <dl class="stats">
-      <div><dt>proyectos en operación</dt><dd>{{ totalProyectos() }}</dd></div>
-      <div><dt>usuarios registrados en nuestros sistemas</dt><dd>{{ totalUsuarios() }}</dd></div>
-      <div><dt>en operación continua</dt><dd>Desde {{ desdeAnio() }}</dd></div>
-    </dl>
+  <div class="escena" (pointermove)="mouse($event)" (pointerleave)="mouse(null)">
+    <app-globo class="globo" />
+    <app-lineas-velocidad />
+    <div class="wrap">
+      <h1>Tecnología a la medida que <span>sí se usa</span> todos los días.</h1>
+      <p>
+        Portales web, software a la medida, apps móviles, agentes de llamadas, tiendas online y punto
+        de venta: diseñamos, construimos y mantenemos las herramientas digitales que tu negocio
+        necesita.
+      </p>
+      <dl class="stats">
+        <div><dt>proyectos en operación</dt><dd>{{ totalProyectos() }}</dd></div>
+        <div><dt>usuarios registrados en nuestros sistemas</dt><dd>{{ totalUsuarios() }}</dd></div>
+        <div><dt>en operación continua</dt><dd>Desde {{ desdeAnio() }}</dd></div>
+      </dl>
+    </div>
+    <!-- Servicios: en escritorio entran en órbita alrededor del globo (fase 2 del scroll); en móvil, una lista. -->
+    <ul class="orbita" aria-label="Servicios">
+      @for (s of servicios(); track s.id; let i = $index) {
+        <li [style.--i]="i" [style.--x]="posiciones[i][0]" [style.--y]="posiciones[i][1]">
+          <a [routerLink]="'/proyectos'" [queryParams]="{ tipo: s.tipo }"><b>{{ s.nombre }}</b><small>{{ s.descripcion }}</small></a>
+        </li>
+      }
+    </ul>
   </div>
 </section>
-
-<app-scroll-world id="servicios" />
 
 <section id="proyectos">
   <div class="wrap">

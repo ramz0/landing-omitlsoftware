@@ -64,7 +64,7 @@ export class Escritorio {
   constructor() {
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     const destroyRef = inject(DestroyRef);
-    // La escena 3D se construye solo al acercarse a la sección (ver también scroll-world).
+    // La escena 3D se construye solo al acercarse a la sección.
     afterNextRender(() => {
       let limpiar: (() => void) | undefined;
       let destruido = false;

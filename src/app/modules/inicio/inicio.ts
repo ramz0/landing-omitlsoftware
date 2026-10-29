@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 
+import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
 
 
@@ -18,8 +19,8 @@ import { ServiciosService } from '@core/services/servicios.service';
 import { ProyectosService } from '@core/services/proyectos.service';
 import { FormContacto } from '@shared/components/form-contacto/form-contacto';
 import { Boton } from '@shared/components/boton/boton';
+import { Globo } from '@shared/components/globo/globo';
 import { LineasVelocidad } from '@shared/components/lineas-velocidad/lineas-velocidad';
-import { ScrollWorld } from '@shared/components/scroll-world/scroll-world';
 import { PersonaCard } from '@shared/components/persona-card/persona-card';
 import { NavNodos } from '@shared/components/nav-nodos/nav-nodos';
 import { Escritorio } from '@shared/components/escritorio/escritorio';
@@ -28,7 +29,7 @@ import { ProyectoCard } from '@shared/components/proyecto-card/proyecto-card';
 
 @Component({
   selector: 'app-inicio',
-  imports: [LineasVelocidad, ScrollWorld, ProyectoCard, PersonaCard, Escritorio, StackMovil, Boton, NavNodos, FormContacto],
+  imports: [RouterLink, Globo, LineasVelocidad, ProyectoCard, PersonaCard, Escritorio, StackMovil, Boton, NavNodos, FormContacto],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +54,15 @@ export class Inicio {
 
   mover(d: number) {
     this.ir(Math.min(Math.max(this.actual() + d, 0), this.destacados().length - 1));
+  }
+
+  /** Mueve las capas del hero con el mouse (variables -1…1 que lee el CSS); solo con puntero fino. */
+  mouse(e: PointerEvent | null) {
+    if (e && e.pointerType !== 'mouse') return;
+    const el = (e?.currentTarget ?? document.getElementById('inicio')) as HTMLElement;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', e ? String(((e.clientX - r.left) / r.width - 0.5) * 2) : '0');
+    el.style.setProperty('--my', e ? String(((e.clientY - r.top) / r.height - 0.5) * 2) : '0');
   }
 
   /** Pasa a true la primera vez que el equipo entra en pantalla y ya no vuelve a false. */
@@ -129,6 +139,9 @@ export class Inicio {
   totalProyectos = this.proyectosSvc.totalProyectos;
   totalUsuarios = this.proyectosSvc.totalUsuarios;
   desdeAnio = this.proyectosSvc.desdeAnio;
+
+  /** Posición de cada servicio en dos columnas (x: -1 izquierda, 1 derecha; y: -1 arriba, 0 centro, 1 abajo), intercaladas. */
+  readonly posiciones = [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]];
 
   readonly email = 'contacto@omitlsoftware.com.mx';
   /** Número de WhatsApp con lada (52…); vacío = no se muestra el botón. */

@@ -2,7 +2,6 @@ import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, Elemen
 
 const NODOS = [
   { id: 'inicio', nombre: 'Inicio' },
-  { id: 'servicios', nombre: 'Servicios' },
   { id: 'proyectos', nombre: 'Proyectos' },
   { id: 'tecnologias', nombre: 'Tecnologías' },
   { id: 'equipo', nombre: 'Equipo' },
