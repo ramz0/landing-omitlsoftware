@@ -55,8 +55,8 @@ export async function crearEscena(op: OpcionesEscena) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.08;
   pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0x6f8fd0, 0x050507, 0.18));
-  const sol = new THREE.DirectionalLight(0x7f9fe0, 0.25);
+  scene.add(new THREE.HemisphereLight(0x5fb3b2, 0x030606, 0.18));
+  const sol = new THREE.DirectionalLight(0x6fc4bc, 0.25);
   sol.position.set(-4, 12, 7);
   sol.castShadow = true;
   sol.shadow.mapSize.set(2048, 2048);
@@ -73,14 +73,14 @@ export async function crearEscena(op: OpcionesEscena) {
   mundo.add(brillo);
 
   // Carcasa y placa
-  const negro = new THREE.MeshStandardMaterial({ color: 0x0b0b0c, roughness: 0.9, metalness: 0 });
+  const negro = new THREE.MeshStandardMaterial({ color: 0x07100f, roughness: 0.9, metalness: 0 });
   const carcasa = new THREE.Mesh(new RoundedBoxGeometry(anchoTotal + 1, 0.9, largoTotal + 1, 3, 0.08), negro);
   carcasa.position.y = -0.45 - 0.05;
   carcasa.receiveShadow = true;
   mundo.add(carcasa);
   const placa = new THREE.Mesh(
     new THREE.PlaneGeometry(anchoTotal + 0.3, largoTotal + 0.3),
-    new THREE.MeshStandardMaterial({ color: 0x050506, roughness: 0.9 }),
+    new THREE.MeshStandardMaterial({ color: 0x030808, roughness: 0.9 }),
   );
   placa.rotation.x = -Math.PI / 2;
   placa.position.y = 0.002;
@@ -135,7 +135,7 @@ export async function crearEscena(op: OpcionesEscena) {
   grano.wrapS = grano.wrapT = THREE.RepeatWrapping;
   // Negro mate: sin barniz ni brillo, solo un grano fino.
   const matTecla = new THREE.MeshStandardMaterial({
-    color: 0x1a1a1e,
+    color: 0x1f3d39,
     roughness: 0.92,
     metalness: 0,
     bumpMap: grano,
@@ -269,12 +269,19 @@ export async function crearEscena(op: OpcionesEscena) {
 
   // Información sobre la mesa: el SVG de la tecnología extruido (con sombra) y su texto "impreso".
   const centroInfo = -(largoTotal + 1) / 2 - 0.35;
+  // Ámbar profundo (bronce): se lee sobre la mesa sin competir con el texto amarillo.
   const pastilla = new THREE.MeshStandardMaterial({
-    color: 0x62626c,
-    roughness: 0.9,
-    emissive: 0x2a1f04,
+    color: 0xb8872a,
+    emissive: 0x4a3408,
+    emissiveIntensity: 0.8,
+    roughness: 0.5,
+    metalness: 0.35,
     side: THREE.DoubleSide,
   });
+  // Luz puntual encima del logo: ilumina su cara superior y el borde (antes solo le llegaba luz por detrás).
+  const luzRelieve = new THREE.PointLight(0xffd27a, 0, 0, 2);
+  luzRelieve.position.set(-5.6, MESA_Y + 2.2, centroInfo + 1.2);
+  scene.add(luzRelieve);
   const iconoMesa = new THREE.Mesh(new THREE.BufferGeometry(), pastilla);
   iconoMesa.castShadow = iconoMesa.receiveShadow = true;
   iconoMesa.position.set(-5.6, MESA_Y, centroInfo);
@@ -287,7 +294,7 @@ export async function crearEscena(op: OpcionesEscena) {
     const { vb, d } = PATHS[nombre];
     const data = new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><path d="${d}"/></svg>`);
     const shapes = data.paths.flatMap((pth) => SVGLoader.createShapes(pth));
-    g = new THREE.ExtrudeGeometry(shapes, { depth: 1, bevelEnabled: false }) as unknown as Geo;
+    g = new THREE.ExtrudeGeometry(shapes, { depth: 1, bevelEnabled: true, bevelThickness: 0.05, bevelSize: Number(vb.split(' ')[2]) * 0.006, bevelOffset: 0, bevelSegments: 2 }) as unknown as Geo;
     g.computeBoundingBox();
     const bb = g.boundingBox!;
     const k = 3.4 / Math.max(bb.max.x - bb.min.x, bb.max.y - bb.min.y);
@@ -449,7 +456,7 @@ export async function crearEscena(op: OpcionesEscena) {
         k.grupo.position.y += (1 - e) * 2.5;
         k.icono.opacity = e;
         const prendida = presionada;
-        k.icono.color.setHex(prendida ? 0xf3c649 : k === hover ? 0xffffff : 0xd0d0d4);
+        k.icono.color.setHex(prendida ? 0xf3c649 : k === hover ? 0xffe9a8 : 0xd0d0d4);
         if (prendida) {
           brillo.position.set(k.grupo.position.x, 0.9, k.grupo.position.z);
           luz = 3;
@@ -474,6 +481,7 @@ export async function crearEscena(op: OpcionesEscena) {
     iconoMesa.visible = hayIcono && !angosto;
     planoTexto.visible = !angosto;
     iconoMesa.scale.y = Math.max(0.001, 1 - Math.pow(1 - emerge, 3));
+    luzRelieve.intensity = iconoMesa.visible ? 12 * emerge : 0;
     opTexto = Math.min(1, opTexto + dt * 3);
     matTexto.opacity = opTexto;
     entorno.tick(performance.now() / 1000);

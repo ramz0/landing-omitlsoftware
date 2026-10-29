@@ -8,7 +8,9 @@
   height: min(100svh, 760px);
   overflow: hidden;
   /* Cuarto oscuro: solo se adivina la luz del monitor. */
-  background: radial-gradient(ellipse 60% 45% at 50% 30%, #0b1220, #020306 75%), #020306;
+  background:
+    radial-gradient(ellipse 60% 25% at 50% 100%, #f3c6491c, transparent),
+    radial-gradient(ellipse 60% 45% at 50% 30%, #0a3a3a, #020808 75%), #020808;
 }
 .escena { position: absolute; inset: 0; }
 
@@ -83,7 +85,7 @@
 :host(.sin-webgl) .botones button[aria-pressed='true'] { color: var(--yellow); }
 
 
-.esqueleto { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 30%, #0b122055 50%, transparent 70%) 0 0 / 200% 100%; animation: brillo 1.4s linear infinite; }
+.esqueleto { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 30%, #0a3a3a55 50%, transparent 70%) 0 0 / 200% 100%; animation: brillo 1.4s linear infinite; }
 :host(.sin-webgl) .esqueleto { display: none; }
 @keyframes brillo { to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .esqueleto { animation: none; } }
