@@ -32,7 +32,6 @@ export async function crearEscena(op: OpcionesEscena) {
   const THREE = await import('three');
   const { RoundedBoxGeometry } = await import('three/examples/jsm/geometries/RoundedBoxGeometry.js');
   const { RoomEnvironment } = await import('three/examples/jsm/environments/RoomEnvironment.js');
-  const { SVGLoader } = await import('three/examples/jsm/loaders/SVGLoader.js');
   const { mergeVertices } = await import('three/examples/jsm/utils/BufferGeometryUtils.js');
 
   type Geo = InstanceType<typeof THREE.BufferGeometry>;
@@ -267,45 +266,59 @@ export async function crearEscena(op: OpcionesEscena) {
   const entorno = crearEntorno({ THREE });
   scene.add(entorno.grupo);
 
-  // Información sobre la mesa: el SVG de la tecnología extruido (con sombra) y su texto "impreso".
+  // Información sobre la mesa: el logo de la tecnología como holograma ámbar (con reflejo) y su texto "impreso".
   const centroInfo = -(largoTotal + 1) / 2 - 0.35;
-  // Ámbar profundo (bronce): se lee sobre la mesa sin competir con el texto amarillo.
-  const pastilla = new THREE.MeshStandardMaterial({
-    color: 0xb8872a,
-    emissive: 0x4a3408,
-    emissiveIntensity: 0.8,
-    roughness: 0.5,
-    metalness: 0.35,
-    side: THREE.DoubleSide,
-  });
-  // Luz puntual encima del logo: ilumina su cara superior y el borde (antes solo le llegaba luz por detrás).
-  const luzRelieve = new THREE.PointLight(0xffd27a, 0, 0, 2);
-  luzRelieve.position.set(-5.6, MESA_Y + 2.2, centroInfo + 1.2);
-  scene.add(luzRelieve);
-  const iconoMesa = new THREE.Mesh(new THREE.BufferGeometry(), pastilla);
-  iconoMesa.castShadow = iconoMesa.receiveShadow = true;
-  iconoMesa.position.set(-5.6, MESA_Y, centroInfo);
-  iconoMesa.visible = false;
-  scene.add(iconoMesa);
-  const geosIcono = new Map<string, Geo>();
-  const geoIcono = (nombre: NonNullable<Tecnologia['icono']>): Geo => {
-    let g = geosIcono.get(nombre);
-    if (g) return g;
-    const { vb, d } = PATHS[nombre];
-    const data = new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><path d="${d}"/></svg>`);
-    const shapes = data.paths.flatMap((pth) => SVGLoader.createShapes(pth));
-    g = new THREE.ExtrudeGeometry(shapes, { depth: 1, bevelEnabled: true, bevelThickness: 0.05, bevelSize: Number(vb.split(' ')[2]) * 0.006, bevelOffset: 0, bevelSegments: 2 }) as unknown as Geo;
-    g.computeBoundingBox();
-    const bb = g.boundingBox!;
-    const k = 3.4 / Math.max(bb.max.x - bb.min.x, bb.max.y - bb.min.y);
-    g.translate(-(bb.max.x + bb.min.x) / 2, -(bb.max.y + bb.min.y) / 2, 0);
-    // SVG tiene y hacia abajo; al acostarlo sobre la mesa, abajo = hacia el espectador.
-    g.scale(k, -k, 0.3); // 0.3 unidades de alto sobre la mesa
-    g.rotateX(-Math.PI / 2);
-    geosIcono.set(nombre, g);
-    return g;
-  };
+  const AMBAR = '#f3c649';
+  const POS_X = -5.6;
 
+  // El logo se dibuja en un lienzo (trazo + brillo) y va en un plano que flota sobre la mesa.
+  const LADO = 3.8;
+  const TEX = 640;
+  const decales = new Map<string, InstanceType<typeof THREE.CanvasTexture>>();
+  const decalIcono = (nombre: NonNullable<Tecnologia['icono']>) => {
+    let t = decales.get(nombre);
+    if (t) return t;
+    const { vb, d } = PATHS[nombre];
+    const [x0, y0, w, h] = vb.split(' ').map(Number);
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = TEX;
+    const c = cv.getContext('2d')!;
+    const p = new Path2D(d);
+    const k = (0.9 * TEX) / Math.max(w, h);
+    c.translate(TEX / 2 - k * (x0 + w / 2), TEX / 2 - k * (y0 + h / 2));
+    c.scale(k, k);
+    c.lineJoin = 'round';
+    // shadowBlur va en píxeles de lienzo (no escala con la transformación); lineWidth sí, de ahí el /k.
+    c.fillStyle = 'rgba(243,198,73,0.10)';
+    c.fill(p);
+    c.shadowColor = AMBAR;
+    c.shadowBlur = 40;
+    c.strokeStyle = AMBAR;
+    c.lineWidth = 2 / k;
+    c.stroke(p);
+    c.shadowBlur = 14;
+    c.strokeStyle = '#ffe9a8';
+    c.lineWidth = 3 / k;
+    c.stroke(p);
+    t = new THREE.CanvasTexture(cv);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    decales.set(nombre, t);
+    return t;
+  };
+  const matDecal = () => new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false, opacity: 0, blending: THREE.AdditiveBlending });
+  const hacerPlano = (mat: InstanceType<typeof THREE.MeshBasicMaterial>) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(LADO, LADO), mat);
+    m.rotation.x = -Math.PI / 2;
+    m.renderOrder = 1;
+    m.visible = false;
+    scene.add(m);
+    return m;
+  };
+  const matHolo = matDecal();
+  const matReflejo = matDecal();
+  const plano = hacerPlano(matHolo);
+  const reflejo = hacerPlano(matReflejo); // se refleja en la mesa, más tenue
   const TEX_W = 2000;
   const TEX_H = 640;
   const textoInfo = (titulo: string, cuerpo: string, vacio: boolean) => {
@@ -473,15 +486,22 @@ export async function crearEscena(op: OpcionesEscena) {
       matTexto.map = textoInfo(sel?.nombre ?? '', sel ? (sel.uso ?? '') : AYUDA, !sel);
       matTexto.needsUpdate = true;
       hayIcono = !!sel?.icono;
-      if (sel?.icono) iconoMesa.geometry = geoIcono(sel.icono) as never;
+      if (sel?.icono) {
+        matHolo.map = matReflejo.map = decalIcono(sel.icono);
+        matHolo.needsUpdate = matReflejo.needsUpdate = true;
+      }
       emerge = 0;
       opTexto = 0;
     }
     emerge = Math.min(1, emerge + dt * 2.2);
-    iconoMesa.visible = hayIcono && !angosto;
+    const seg = performance.now() / 1000;
+    plano.visible = reflejo.visible = hayIcono && !angosto;
+    const flota = 0.3 + Math.sin(seg * 1.6) * 0.04;
+    plano.position.set(POS_X + 0.4, MESA_Y + flota, centroInfo);
+    reflejo.position.set(POS_X + 0.4, MESA_Y - flota * 0.6, centroInfo);
+    matHolo.opacity = emerge * (0.9 + 0.1 * Math.sin(seg * 30) * Math.sin(seg * 7.1));
+    matReflejo.opacity = matHolo.opacity * 0.22;
     planoTexto.visible = !angosto;
-    iconoMesa.scale.y = Math.max(0.001, 1 - Math.pow(1 - emerge, 3));
-    luzRelieve.intensity = iconoMesa.visible ? 12 * emerge : 0;
     opTexto = Math.min(1, opTexto + dt * 3);
     matTexto.opacity = opTexto;
     entorno.tick(performance.now() / 1000);
