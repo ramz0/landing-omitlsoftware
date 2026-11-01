@@ -17,6 +17,7 @@ import gsap from 'gsap';
 import { EquipoService } from '@core/services/equipo.service';
 import { ServiciosService } from '@core/services/servicios.service';
 import { ProyectosService } from '@core/services/proyectos.service';
+import { Canales } from '@shared/components/canales/canales';
 import { FormContacto } from '@shared/components/form-contacto/form-contacto';
 import { Boton } from '@shared/components/boton/boton';
 import { Globo } from '@shared/components/globo/globo';
@@ -29,7 +30,7 @@ import { ProyectoCard } from '@shared/components/proyecto-card/proyecto-card';
 
 @Component({
   selector: 'app-inicio',
-  imports: [RouterLink, Globo, LineasVelocidad, ProyectoCard, PersonaCard, Escritorio, StackMovil, Boton, NavNodos, FormContacto],
+  imports: [RouterLink, Globo, LineasVelocidad, ProyectoCard, PersonaCard, Escritorio, StackMovil, Boton, NavNodos, FormContacto, Canales],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -142,10 +143,6 @@ export class Inicio {
 
   /** Posición de cada servicio en dos columnas (x: -1 izquierda, 1 derecha; y: -1 arriba, 0 centro, 1 abajo), intercaladas. */
   readonly posiciones = [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]];
-
-  readonly email = 'contacto@omitlsoftware.com.mx';
-  /** Número de WhatsApp con lada (52…); vacío = no se muestra el botón. */
-  readonly whatsapp = '';
 
   readonly pasos = [
     { titulo: '1. Entendemos tu operación', texto: 'Qué haces hoy, dónde se atora y quién lo usa.' },

@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 
 import { ProyectosService } from '@core/services/proyectos.service';
 import { ServiciosService } from '@core/services/servicios.service';
+import { Canales } from '@shared/components/canales/canales';
 import { Mascota, Pose } from '@shared/components/mascota/mascota';
 import { PRODUCTO } from '@shared/components/form-contacto/form-contacto';
 import { environment } from '../../../environments/environment';
@@ -18,7 +19,7 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
   selector: 'app-calculator',
-  imports: [Mascota, RouterLink],
+  imports: [Mascota, RouterLink, Canales],
   template: `
     <section class="cotizador">
       <div #barra class="progreso" role="progressbar" aria-label="Avance del cotizador"
@@ -136,6 +137,8 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
               <p class="error">No se pudo enviar. Intenta de nuevo o escríbenos a contacto&#64;omitlsoftware.com.mx.</p>
             }
           </form>
+          <p class="ayuda">¿Prefieres escribirnos? Elige el canal que te quede mejor.</p>
+          <app-canales [mensaje]="mensajeContacto()" asunto="Mi cotización en omitl software" />
           <button type="button" class="atras" (click)="atras()">← Cambiar respuestas</button>
         }
         </div>
@@ -229,6 +232,11 @@ export class Calculator {
     const tipos = [this.activo(), ...this.otras().map((o) => o.id)].map((id) => this.servicios().find((s) => s.id === id)?.tipo);
     const orden = [...new Set(tipos)];
     return this.proyectos().filter((p) => orden.includes(p.categoria)).sort((a, b) => orden.indexOf(a.categoria) - orden.indexOf(b.categoria)).slice(0, 6);
+  });
+  /** Texto con el que llega el chat o el correo: lo que cotizó, para no repetirlo. */
+  mensajeContacto = computed(() => {
+    const m = this.montosTexto()?.[0];
+    return `Hola, hice la cotización en su sitio: ${this.servicio()?.nombre ?? ''}${m ? `, ${m.valor} (${m.etiqueta})` : ''}. Quiero más información.`;
   });
   descripcion = computed(() => DESCRIPCION[this.activo()] ?? '');
   partida = computed(() => PUNTO_DE_PARTIDA[this.respuestas()['hoy']] ?? '');

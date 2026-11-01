@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { CONTACTO } from '@core/contacto';
+import { Canales } from '@shared/components/canales/canales';
 import { ServiciosService } from '@core/services/servicios.service';
 
 @Component({
   selector: 'app-footer',
-  imports: [RouterLink],
+  imports: [RouterLink, Canales],
   templateUrl: './footer.html',
   styleUrl: './footer.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,6 +15,5 @@ import { ServiciosService } from '@core/services/servicios.service';
 export class Footer {
   readonly anio = new Date().getFullYear();
   readonly servicios = inject(ServiciosService).servicios;
-  // ponytail: duplicado de inicio.ts; moverlo a un servicio si hay un tercer uso.
-  readonly email = 'contacto@omitlsoftware.com.mx';
+  readonly email = CONTACTO.email;
 }

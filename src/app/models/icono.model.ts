@@ -15,6 +15,8 @@ export type NombreIcono =
   | 'flutter'
   | 'instagram'
   | 'github'
+  | 'whatsapp'
+  | 'correo'
   | 'linkedin'
   | 'verificado'
   | 'edificio'

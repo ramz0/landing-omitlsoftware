@@ -214,7 +214,6 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
 .steps li { border-left: 3px solid var(--yellow); padding-left: 1rem; }
 .steps b { display: block; color: var(--yellow); }
 
-.accion { margin-top: 1.5rem; }
 
 .servicio {
   /* Card "hundida": sin borde ni header, el relieve viene de la sombra interna. */
@@ -260,4 +259,5 @@ h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin-bottom: 0.5rem; }
   .equipo:not(.visto) > app-persona-card { opacity: 1; }
 }
 
-.accion { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+#contacto .o { margin: 1.2rem 0 0; font-weight: 600; color: var(--jade); }
+#contacto .confianza { margin-top: 1rem; font-size: 0.85rem; opacity: 0.7; }
