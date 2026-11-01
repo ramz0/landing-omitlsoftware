@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, effect, inject, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, computed, effect, input, signal, viewChild } from '@angular/core';
 import gsap from 'gsap';
 
 /** Tamaño de cada cuadro en `public/avatar/<cuadro>.webp` (px nativos) y escala de pantalla (0.5 = pixeles de 4 px). */
@@ -9,8 +9,9 @@ const CUADROS = {
   celebra: [257, 227],
 } as const;
 const ESCALA = 0.5;
-/** Hojas de confeti (`confeti1..8.webp`); cada celebración suelta 3 distintas. */
-const HOJAS = 8;
+/** Colores del confeti (los de la marca) y cuántas piezas caen en cada celebración. */
+const CONFETI = ['#045453', '#f3c649', '#90c6c5', '#f5e8bc'];
+const PIEZAS = 34;
 export type Pose = 'saluda' | 'senala' | 'piensa' | 'celebra';
 
 /**
@@ -22,9 +23,7 @@ export type Pose = 'saluda' | 'senala' | 'piensa' | 'celebra';
   selector: 'app-mascota',
   template: `
     <div class="mascota" #caja>
-      @for (n of confeti(); track n) {
-        <img class="confeti" [src]="'avatar/confeti' + n + '.webp'" alt="" />
-      }
+      <div class="confeti" #confeti aria-hidden="true"></div>
       <div class="pj" #pj>
         @for (p of cuadros; track p.id) {
           <img [src]="'avatar/' + p.id + '.webp'" alt="" [style.width.px]="p.w" [style.height.px]="p.h" [class.visible]="p.id === cuadro()" />
@@ -45,9 +44,7 @@ export class Mascota {
   /** Variante del cuadro: '' normal, '_p' ojos cerrados (parpadeo), '_2' ojos mirando a otro lado (pensando). */
   private variante = signal('');
   cuadro = computed(() => this.pose() + this.variante());
-  confeti = signal<number[]>([]);
-  private injector = inject(Injector);
-  private caja = viewChild.required<ElementRef<HTMLElement>>('caja');
+  private confeti = viewChild.required<ElementRef<HTMLElement>>('confeti');
   private ciclo?: gsap.core.Tween;
   private pj = viewChild.required<ElementRef<HTMLElement>>('pj');
   private sombra = viewChild.required<ElementRef<HTMLElement>>('sombra');
@@ -116,19 +113,24 @@ export class Mascota {
     this.ciclo = gsap.delayedCall(p === 'piensa' ? 0.35 : 1.5 + Math.random() * 2, alterna);
   }
 
-  /** Tres hojas de confeti caen detrás de ella a distinta velocidad y se desvanecen; luego se quitan. */
+  /** Cuadritos y rectangulitos de pixel (2–4 px) caen detrás de ella, se mecen y se desvanecen; cada uno se quita al terminar. */
   private lluvia() {
     if (this.reducido) return;
-    const hojas = [...Array(HOJAS).keys()].map((i) => i + 1).sort(() => Math.random() - 0.5).slice(0, 3);
-    this.confeti.set(hojas);
-    afterNextRender(() => {
-      const imgs = this.caja().nativeElement.querySelectorAll<HTMLElement>('.confeti');
-      gsap.fromTo(imgs, { y: -100, opacity: 1 }, {
-        y: 90, duration: (i: number) => 1.5 + i * 0.4, ease: 'none', stagger: 0.12,
-        onComplete: () => this.confeti.set([]),
-      });
-      gsap.to(imgs, { opacity: 0, delay: 1.3, duration: 1, stagger: 0.25 });
-    }, { injector: this.injector });
+    const caja = this.confeti().nativeElement;
+    const azar = (a: number, b: number) => a + Math.random() * (b - a);
+    for (let i = 0; i < PIEZAS; i++) {
+      const el = document.createElement('i');
+      const largo = Math.random() < 0.35;
+      const [w, h] = largo ? [2, 4 + Math.round(Math.random())] : [2 + Math.round(Math.random() * 2), 0];
+      Object.assign(el.style, { position: 'absolute', left: 0, top: 0, width: `${w}px`, height: `${h || w}px`, background: CONFETI[i % CONFETI.length] });
+      caja.appendChild(el);
+      const x = azar(-10, 140);
+      gsap.timeline({ delay: azar(0, 0.6), onComplete: () => el.remove() })
+        .fromTo(el, { x, y: azar(-50, -20), rotation: azar(0, 90), opacity: 1 },
+          { y: azar(95, 125), rotation: `+=${azar(-200, 200)}`, duration: azar(1.3, 2.2), ease: 'power1.in' }, 0)
+        .to(el, { x: `+=${azar(-14, 14)}`, duration: azar(0.5, 0.8), ease: 'sine.inOut', yoyo: true, repeat: 2 }, 0)
+        .to(el, { opacity: 0, duration: 0.5 }, '>-0.5');
+    }
   }
 
   private escribir(t: string) {
