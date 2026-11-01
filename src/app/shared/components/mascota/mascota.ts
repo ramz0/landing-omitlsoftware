@@ -7,16 +7,18 @@ const CUADROS = {
   senala: [236, 215], senala_p: [236, 215],
   piensa: [189, 206], piensa_2: [189, 206],
   celebra: [257, 227],
+  confia: [181, 215], confia_p: [181, 215],
+  celu: [223, 215], celu_p: [223, 215],
 } as const;
 const ESCALA = 0.5;
 /** Colores del confeti (los de la marca) y cuántas piezas caen en cada celebración. */
 const CONFETI = ['#045453', '#f3c649', '#90c6c5', '#f5e8bc'];
 const PIEZAS = 80;
-export type Pose = 'saluda' | 'senala' | 'piensa' | 'celebra';
+export type Pose = 'saluda' | 'senala' | 'piensa' | 'celebra' | 'confia' | 'celu';
 
 /**
  * Mascota con globo de texto: entra con un salto cuando se ve en pantalla, cambia de pose con un brinco
- * y "escribe" lo que dice. Parpadea al saludar y señalar, mueve los ojos al pensar y celebra con confeti
+ * y "escribe" lo que dice. Parpadea al saludar, señalar y mostrar el celular, mueve los ojos al pensar y celebra con confeti
  * cayendo. Sin movimiento si el usuario lo reduce (el texto aparece completo).
  */
 @Component({

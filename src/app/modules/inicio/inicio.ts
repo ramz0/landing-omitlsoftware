@@ -17,7 +17,7 @@ import gsap from 'gsap';
 import { EquipoService } from '@core/services/equipo.service';
 import { ServiciosService } from '@core/services/servicios.service';
 import { ProyectosService } from '@core/services/proyectos.service';
-import { Mascota } from '@shared/components/mascota/mascota';
+import { Mascota, Pose } from '@shared/components/mascota/mascota';
 import { Canales } from '@shared/components/canales/canales';
 import { FormContacto } from '@shared/components/form-contacto/form-contacto';
 import { Boton } from '@shared/components/boton/boton';
@@ -144,6 +144,9 @@ export class Inicio {
 
   /** Posición de cada servicio en dos columnas (x: -1 izquierda, 1 derecha; y: -1 arriba, 0 centro, 1 abajo), intercaladas. */
   readonly posiciones = [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]];
+
+  /** Confiada y amable; al acercarse a los canales muestra su celular. */
+  poseContacto = signal<Pose>('confia');
 
   readonly pasos = [
     { titulo: '1. Entendemos tu operación', texto: 'Qué haces hoy, dónde se atora y quién lo usa.' },
