@@ -12,7 +12,7 @@ import { Boton } from '@shared/components/boton/boton';
   templateUrl: './header.html',
   styleUrl: './header.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(window:scroll)': 'alScroll()' },
+  host: { '(window:scroll)': 'alScroll()', '[style.height.px]': 'flotante() ? 0 : 72', style: 'display:block' }, // 72 = altura del header sin compactar
 })
 export class Header {
   private router = inject(Router);
