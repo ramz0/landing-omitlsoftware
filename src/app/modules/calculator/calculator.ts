@@ -8,6 +8,7 @@ import gsap from 'gsap';
 
 import { entradaPregunta, revelar, salidaPregunta } from './calculator.animacion';
 import { ICONOS } from './calculator.iconos';
+import { ICONO_OPCION, TRAZOS } from './calculator.iconos-opcion';
 import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
@@ -32,8 +33,13 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago
         <div #opcionesEl class="opciones">
           @for (o of p.opciones; track o.id) {
             <button type="button" class="opcion" [class.sel]="respuestas()[p.id] === o.id" (click)="elegir(p.id, o.id, $event)">
-              <b>{{ o.texto }}</b>
-              @if (o.detalle) { <span>{{ o.detalle }}</span> }
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                @for (d of trazos(p.id, o.id); track $index) { <path [attr.d]="d" /> }
+              </svg>
+              <span class="txt">
+                <b>{{ o.texto }}</b>
+                @if (o.detalle) { <small>{{ o.detalle }}</small> }
+              </span>
             </button>
           }
         </div>
@@ -166,6 +172,10 @@ export class Calculator {
   celdasIcono = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing']).flatMap((fila) => [...fila].map((c) => (c === '#' ? 'on' : c === 'y' ? 'y' : ''))));
   columnas = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing'])[0].length);
   modulos = computed(() => PROPUESTA[this.activo()] ?? []);
+
+  trazos(pregunta: string, opcion: string): string[] {
+    return TRAZOS[ICONO_OPCION[`${pregunta}.${opcion}`]] ?? [];
+  }
 
   elegir(pregunta: string, opcion: string, ev?: Event) {
     if (this.ocupado) return;

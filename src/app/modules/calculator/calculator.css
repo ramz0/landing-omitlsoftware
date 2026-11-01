@@ -15,8 +15,11 @@
 h1 { font-size: clamp(1.5rem, 4vw, 2rem); margin: 0 0 1.2rem; color: var(--night); }
 h2 { font-size: 1.1rem; margin: 1.8rem 0 0.6rem; color: var(--night); }
 .opciones { display: grid; gap: 0.7rem; animation: aparece 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.opcion { display: grid; gap: 0.15rem; text-align: left; padding: 0.95rem 1.1rem; border: 2px solid var(--stone); border-radius: 14px; background: #fff; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
-.opcion span { font-size: 0.85rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
+.opcion { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.9rem; text-align: left; padding: 0.8rem 1.1rem; border: 2px solid var(--stone); border-radius: 14px; background: #fff; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
+.opcion .txt { display: grid; gap: 0.15rem; }
+.opcion small { font-size: 0.85rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
+.ico { width: 2.6rem; height: 2.6rem; padding: 0.55rem; border-radius: 12px; color: var(--jade); background: color-mix(in srgb, var(--jade) 10%, transparent); transition: background 0.2s, color 0.2s; }
+.opcion:hover .ico, .opcion.sel .ico { background: var(--jade); color: #fff; }
 .opcion:hover { border-color: var(--jade); transform: translateY(-1px); }
 .opcion.sel { border-color: var(--jade); background: color-mix(in srgb, var(--jade) 8%, #fff); }
 .opcion:focus-visible { outline: 2px solid var(--jade); outline-offset: 2px; }
