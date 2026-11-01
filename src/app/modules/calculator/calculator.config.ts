@@ -22,7 +22,7 @@ export interface Pregunta {
 export const PREGUNTAS: Pregunta[] = [
   {
     id: 'objetivo',
-    titulo: '¿Qué quieres lograr?',
+    titulo: '¿Qué impulso necesita tu negocio?',
     opciones: [
       { id: 'landing', texto: 'Que más clientes me encuentren', detalle: 'Una página profesional para tu negocio' },
       { id: 'tienda', texto: 'Vender por internet', detalle: 'Catálogo, carrito y pagos' },

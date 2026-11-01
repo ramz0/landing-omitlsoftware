@@ -26,6 +26,9 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago
 
       @if (pregunta(); as p) {
         <h1>{{ p.titulo }}</h1>
+        @if (paso() === 0) {
+          <p class="ayuda">Elige el que mejor encaje. Son {{ preguntas.length }} preguntas cortas y al final te damos una propuesta con precio estimado.</p>
+        }
         <div class="opciones">
           @for (o of p.opciones; track o.id) {
             <button type="button" class="opcion" [class.sel]="respuestas()[p.id] === o.id" (click)="elegir(p.id, o.id)">

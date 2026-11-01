@@ -55,3 +55,5 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .incluye.abierto::after { opacity: 0; }
 .incluye .propuesta { line-height: 1.5; padding-bottom: 0; }
 .rango small { font-size: 0.9rem; font-weight: 500; color: color-mix(in srgb, var(--night) 65%, transparent); }
+
+.ayuda { margin: -0.6rem 0 1.2rem; font-size: 0.95rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
