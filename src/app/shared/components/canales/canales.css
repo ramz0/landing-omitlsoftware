@@ -3,6 +3,12 @@
 .canal:hover, .canal:focus-visible { transform: translateY(-2px); box-shadow: 0 6px 14px -8px var(--night); background: color-mix(in srgb, var(--yellow) 25%, #fff); }
 .canal app-icono { font-size: 1.3rem; color: var(--jade); }
 .canal span { overflow-wrap: anywhere; }
+/* Menú de correo web (solo en compu), bajo la píldora del correo. */
+.ancla { position: relative; }
+.menu { position: absolute; z-index: 5; top: calc(100% + 0.4rem); left: 0; min-width: 11rem; display: grid; padding: 0.3rem; border: 2px solid var(--night); border-radius: 12px; background: #fff; box-shadow: 3px 3px 0 var(--night); animation: sube 0.15s ease-out; }
+.menu a, .menu button { padding: 0.5rem 0.8rem; border: 0; border-radius: 8px; background: none; color: var(--night); font: inherit; font-weight: 600; text-align: left; text-decoration: none; cursor: pointer; }
+.menu a:hover, .menu button:hover, .menu a:focus-visible, .menu button:focus-visible { background: color-mix(in srgb, var(--yellow) 40%, #fff); }
+@keyframes sube { from { opacity: 0; transform: translateY(-6px); } }
 /* WhatsApp es el canal principal: amarillo de la marca, con borde y sombra dura como el globo de la mascota. */
 .wa { background: var(--yellow); border: 2px solid var(--night); border-radius: 999px; box-shadow: 3px 3px 0 var(--night); font-size: 1.05rem; }
 .wa app-icono { color: var(--night); }
@@ -14,4 +20,5 @@
 .iconos .canal app-icono, .iconos .wa app-icono { color: var(--lime); font-size: 1.2rem; }
 .iconos .canal:hover { background: var(--yellow); transform: none; box-shadow: none; }
 .iconos .canal:hover app-icono { color: var(--night); }
-@media (prefers-reduced-motion: reduce) { .canal { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .canal { transition: none; } .menu { animation: none; } }
+.iconos .menu { top: auto; bottom: calc(100% + 0.4rem); }
