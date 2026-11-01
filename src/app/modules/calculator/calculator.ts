@@ -9,7 +9,7 @@ import gsap from 'gsap';
 import { entradaPregunta, revelar, salidaPregunta } from './calculator.animacion';
 import { ICONOS } from './calculator.iconos';
 import { ICONO_OPCION, TRAZOS } from './calculator.iconos-opcion';
-import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
+import { DESCRIPCION, EXTRAS, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
@@ -63,6 +63,12 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago
         <button type="button" class="vermas" [attr.aria-expanded]="abierto()" (click)="abierto.set(!abierto())">
           {{ abierto() ? 'Ver menos' : 'Ver más' }} <span class="flecha" [class.arriba]="abierto()">▾</span>
         </button>
+        @if (extras().length) {
+          <p class="extras-t">Extras para ti, incluidos en el precio</p>
+          <ul class="extras">
+            @for (e of extras(); track e) { <li>{{ e }}</li> }
+          </ul>
+        }
         @if (montosTexto(); as ms) {
           @for (m of ms; track m.etiqueta) {
             <p class="rango" [class.chico]="ms.length > 1">{{ m.valor }} <small>{{ m.etiqueta }}</small></p>
@@ -171,6 +177,7 @@ export class Calculator {
   /** Ícono de pixeles del servicio activo: una clase por celda (`on` jade, `y` amarillo, vacía). */
   celdasIcono = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing']).flatMap((fila) => [...fila].map((c) => (c === '#' ? 'on' : c === 'y' ? 'y' : ''))));
   columnas = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing'])[0].length);
+  extras = computed(() => Object.entries(this.respuestas()).flatMap(([p, o]) => EXTRAS[`${p}.${o}`] ?? []));
   modulos = computed(() => PROPUESTA[this.activo()] ?? []);
 
   trazos(pregunta: string, opcion: string): string[] {

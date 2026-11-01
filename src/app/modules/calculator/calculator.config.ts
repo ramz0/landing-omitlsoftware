@@ -146,6 +146,15 @@ export const PUNTO_DE_PARTIDA: Record<string, string> = {
   sistema: 'mejorar o reemplazar lo que ya usas',
 };
 
+/** Extras que sumamos según lo que contestó (`pregunta.respuesta`); su costo ya va dentro del rango (ver `suma`). */
+export const EXTRAS: Record<string, string[]> = {
+  'marca.no': [
+    'Ideas de logo y paleta de colores para tu marca',
+    'Selección de imágenes para usar en tu producto',
+    'Contenido multimedia adicional: imágenes y videos',
+  ],
+};
+
 /** Redondea a $500 (hasta $20 mil) o $1,000 para no aparentar una precisión que no hay. */
 const redondear = (n: number) => { const paso = n < 20000 ? 500 : 1000; return Math.round(n / paso) * paso; };
 

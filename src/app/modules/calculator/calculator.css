@@ -60,3 +60,8 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .rango small { font-size: 0.9rem; font-weight: 500; color: color-mix(in srgb, var(--night) 65%, transparent); }
 
 .ayuda { margin: -0.6rem 0 1.2rem; font-size: 0.95rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
+
+.extras-t { margin: 0.4rem 0 0.3rem; font-size: 0.85rem; font-weight: 600; color: var(--jade); }
+.extras { margin: 0 0 0.8rem; padding: 0; list-style: none; display: grid; gap: 0.25rem; }
+.extras li { padding-left: 1.2rem; position: relative; }
+.extras li::before { content: '+'; position: absolute; left: 0; font-weight: 700; color: var(--yellow); -webkit-text-stroke: 0.5px var(--night); }
