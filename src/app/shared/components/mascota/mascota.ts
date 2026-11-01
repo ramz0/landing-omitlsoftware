@@ -11,7 +11,7 @@ const CUADROS = {
 const ESCALA = 0.5;
 /** Colores del confeti (los de la marca) y cuántas piezas caen en cada celebración. */
 const CONFETI = ['#045453', '#f3c649', '#90c6c5', '#f5e8bc'];
-const PIEZAS = 34;
+const PIEZAS = 80;
 export type Pose = 'saluda' | 'senala' | 'piensa' | 'celebra';
 
 /**
@@ -113,7 +113,7 @@ export class Mascota {
     this.ciclo = gsap.delayedCall(p === 'piensa' ? 0.35 : 1.5 + Math.random() * 2, alterna);
   }
 
-  /** Cuadritos y rectangulitos de pixel (2–4 px) caen detrás de ella, se mecen y se desvanecen; cada uno se quita al terminar. */
+  /** Cuadritos y rectangulitos de pixel (3–5 px) caen detrás de ella, se mecen y se desvanecen; cada uno se quita al terminar. */
   private lluvia() {
     if (this.reducido) return;
     const caja = this.confeti().nativeElement;
@@ -121,11 +121,11 @@ export class Mascota {
     for (let i = 0; i < PIEZAS; i++) {
       const el = document.createElement('i');
       const largo = Math.random() < 0.35;
-      const [w, h] = largo ? [2, 4 + Math.round(Math.random())] : [2 + Math.round(Math.random() * 2), 0];
+      const [w, h] = largo ? [3, 6 + Math.round(Math.random() * 2)] : [3 + Math.round(Math.random() * 2), 0];
       Object.assign(el.style, { position: 'absolute', left: 0, top: 0, width: `${w}px`, height: `${h || w}px`, background: CONFETI[i % CONFETI.length] });
       caja.appendChild(el);
       const x = azar(-10, 140);
-      gsap.timeline({ delay: azar(0, 0.6), onComplete: () => el.remove() })
+      gsap.timeline({ delay: azar(0, 0.9), onComplete: () => el.remove() })
         .fromTo(el, { x, y: azar(-50, -20), rotation: azar(0, 90), opacity: 1 },
           { y: azar(95, 125), rotation: `+=${azar(-200, 200)}`, duration: azar(1.3, 2.2), ease: 'power1.in' }, 0)
         .to(el, { x: `+=${azar(-14, 14)}`, duration: azar(0.5, 0.8), ease: 'sine.inOut', yoyo: true, repeat: 2 }, 0)
