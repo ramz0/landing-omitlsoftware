@@ -137,7 +137,7 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
               <p class="error">No se pudo enviar. Intenta de nuevo o escríbenos a contacto&#64;omitlsoftware.com.mx.</p>
             }
           </form>
-                    <app-canales [mensaje]="mensajeContacto()" asunto="Mi cotización en omitl software" />
+          <app-canales [mensaje]="mensajeContacto()" asunto="Cotización desde la página de omitl software" />
           <button type="button" class="atras" (click)="atras()">← Cambiar respuestas</button>
         }
         </div>
@@ -232,10 +232,17 @@ export class Calculator {
     const orden = [...new Set(tipos)];
     return this.proyectos().filter((p) => orden.includes(p.categoria)).sort((a, b) => orden.indexOf(a.categoria) - orden.indexOf(b.categoria)).slice(0, 6);
   });
-  /** Texto con el que llega el chat o el correo: lo que cotizó, para no repetirlo. */
+  /** Texto con el que llega el chat o el correo: de dónde viene, el producto, lo que contestó y lo que cotizó. */
   mensajeContacto = computed(() => {
-    const m = this.montosTexto()?.[0];
-    return `Hola, hice la cotización en su sitio: ${this.servicio()?.nombre ?? ''}${m ? `, ${m.valor} (${m.etiqueta})` : ''}. Quiero más información.`;
+    const r = this.respuestas();
+    const resp = PREGUNTAS.flatMap((p) => { const o = p.opciones.find((x) => x.id === r[p.id]); return o ? [`▪️ ${p.titulo} ${o.texto}`] : []; });
+    const montos = (this.montosTexto() ?? []).map((m) => `💰 ${m.etiqueta}: ${m.valor}`);
+    return [
+      `👋 Hola, quiero cotizar. Vengo de la página de omitl software 🌐 y estoy interesado en: ${this.servicio()?.nombre ?? ''} ✨`,
+      '', '📋 Esto contesté en la calculadora:', ...resp,
+      ...(montos.length ? ['', '🧮 Mi cotización estimada (sin IVA):', ...montos] : []),
+      '', '¿Me pueden dar más información? 🙌',
+    ].join('\n');
   });
   descripcion = computed(() => DESCRIPCION[this.activo()] ?? '');
   partida = computed(() => PUNTO_DE_PARTIDA[this.respuestas()['hoy']] ?? '');

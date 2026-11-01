@@ -41,8 +41,8 @@ import { Icono } from '@shared/components/icono/icono';
 export class Canales {
   readonly modo = input<'tarjetas' | 'iconos'>('tarjetas');
   /** Texto con el que ya llega el chat de WhatsApp; el visitante solo da enviar. */
-  readonly mensaje = input('Hola, quiero cotizar un proyecto');
-  readonly asunto = input('Proyecto de software');
+  readonly mensaje = input('👋 Hola, quiero cotizar. Vengo de la página de omitl software 🌐 y estoy interesado en sus servicios 🚀');
+  readonly asunto = input('Cotización desde la página de omitl software');
   readonly c = CONTACTO;
   readonly redes = CONTACTO.redes.filter((r) => r.url);
   readonly webmail = WEBMAIL;

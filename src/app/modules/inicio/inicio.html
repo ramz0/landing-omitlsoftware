@@ -101,7 +101,7 @@
     <p class="lead">Cuéntanos qué necesitas y te respondemos con una propuesta clara.</p>
     <app-mascota [pose]="poseContacto()" texto="¿Prefieres escribirnos? Elige el canal que te quede mejor, aquí estamos." />
     <div (mouseenter)="poseContacto.set('celu')" (mouseleave)="poseContacto.set('confia')" (focusin)="poseContacto.set('celu')" (focusout)="poseContacto.set('confia')">
-      <app-canales mensaje="Hola, quiero cotizar un proyecto" />
+      <app-canales />
     </div>
     <p class="o">o déjanos tus datos y te escribimos nosotros</p>
     <app-form-contacto />

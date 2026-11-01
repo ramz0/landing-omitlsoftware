@@ -31,5 +31,5 @@ import { Header } from '@shared/components/header/header';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicLayout {
-  readonly wa = CONTACTO.whatsapp ? linkWhatsapp('Hola, tengo una duda sobre sus servicios') : '';
+  readonly wa = CONTACTO.whatsapp ? linkWhatsapp('👋 Hola, tengo una duda. Vengo de la página de omitl software 🌐') : '';
 }
