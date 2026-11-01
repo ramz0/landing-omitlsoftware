@@ -60,3 +60,29 @@ export function revelar(barra: HTMLElement, icono: HTMLElement, resto: HTMLEleme
   });
   return tl;
 }
+
+/**
+ * Al elegir una respuesta: un pixel sale del botón y viaja a la celda de la barra que se enciende; mientras
+ * tanto las respuestas y el título se apagan. `alTerminar` cambia de pregunta (se llama al llegar el pixel).
+ */
+export function salidaPregunta(btn: HTMLElement, barra: HTMLElement, titulo: HTMLElement, opciones: HTMLElement, destino: number, alTerminar: () => void) {
+  const celda = barra.children[Math.min(Math.max(destino, 0), barra.children.length - 1)] as HTMLElement;
+  const o = celda.getBoundingClientRect();
+  const r = btn.getBoundingClientRect();
+  const p = document.createElement('div');
+  Object.assign(p.style, { position: 'fixed', left: `${r.left + 14}px`, top: `${r.top + r.height / 2 - 6}px`, width: '12px', height: '12px', background: '#045453', borderRadius: '2px', zIndex: '55', pointerEvents: 'none' });
+  document.body.appendChild(p);
+  btn.classList.add('sel');
+  gsap.timeline({ onComplete: () => { p.remove(); alTerminar(); } })
+    .to(btn, { scale: 0.98, duration: 0.12, yoyo: true, repeat: 1 })
+    .to(p, { left: o.left, top: o.top, width: o.width, height: o.height, duration: 0.55, ease: 'power2.inOut' }, '<')
+    .to(opciones.children, { opacity: 0, y: -8, duration: 0.25, stagger: 0.04 }, '<0.1')
+    .to(titulo, { opacity: 0, duration: 0.2 }, '<');
+}
+
+/** La pregunta nueva: el título sube un poco y las respuestas llegan de abajo en cascada. */
+export function entradaPregunta(titulo: HTMLElement, opciones: HTMLElement, alTerminar: () => void) {
+  gsap.timeline({ onComplete: alTerminar })
+    .fromTo(titulo, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', clearProps: 'all' })
+    .fromTo(opciones.children, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.07, clearProps: 'all' }, '<0.1');
+}

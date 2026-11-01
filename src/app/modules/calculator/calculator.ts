@@ -6,7 +6,7 @@ import { PRODUCTO } from '@shared/components/form-contacto/form-contacto';
 import { environment } from '../../../environments/environment';
 import gsap from 'gsap';
 
-import { revelar } from './calculator.animacion';
+import { entradaPregunta, revelar, salidaPregunta } from './calculator.animacion';
 import { ICONOS } from './calculator.iconos';
 import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
 
@@ -25,13 +25,13 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago
       <p class="paso">{{ etiquetaPaso() }}</p>
 
       @if (pregunta(); as p) {
-        <h1>{{ p.titulo }}</h1>
+        <h1 #titulo>{{ p.titulo }}</h1>
         @if (paso() === 0) {
           <p class="ayuda">Elige el que mejor encaje. Son {{ preguntas.length }} preguntas cortas y al final te damos una propuesta con precio estimado.</p>
         }
-        <div class="opciones">
+        <div #opcionesEl class="opciones">
           @for (o of p.opciones; track o.id) {
-            <button type="button" class="opcion" [class.sel]="respuestas()[p.id] === o.id" (click)="elegir(p.id, o.id)">
+            <button type="button" class="opcion" [class.sel]="respuestas()[p.id] === o.id" (click)="elegir(p.id, o.id, $event)">
               <b>{{ o.texto }}</b>
               @if (o.detalle) { <span>{{ o.detalle }}</span> }
             </button>
@@ -118,6 +118,10 @@ export class Calculator {
   private icono = viewChild<ElementRef<HTMLElement>>('icono');
   private info = viewChild<ElementRef<HTMLElement>>('info');
   private detalle = viewChild<ElementRef<HTMLElement>>('detalle');
+  private titulo = viewChild<ElementRef<HTMLElement>>('titulo');
+  private opcionesEl = viewChild<ElementRef<HTMLElement>>('opcionesEl');
+  /** Mientras una respuesta se anima, los toques extra se ignoran. */
+  private ocupado = false;
   respuestas = signal<Record<string, string>>({});
   estado = signal<'listo' | 'enviando' | 'enviado' | 'error'>('listo');
 
@@ -163,12 +167,27 @@ export class Calculator {
   columnas = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing'])[0].length);
   modulos = computed(() => PROPUESTA[this.activo()] ?? []);
 
-  elegir(pregunta: string, opcion: string) {
-    this.seleccionada.set(null);
-    this.abierto.set(false);
-    this.respuestas.update((r) => ({ ...r, [pregunta]: opcion }));
-    this.paso.update((p) => p + 1); // al elegir se avanza solo: una pregunta, un toque
-    if (this.paso() === PREGUNTAS.length) this.revelar();
+  elegir(pregunta: string, opcion: string, ev?: Event) {
+    if (this.ocupado) return;
+    const avanzar = () => {
+      this.seleccionada.set(null);
+      this.abierto.set(false);
+      this.respuestas.update((r) => ({ ...r, [pregunta]: opcion }));
+      this.paso.update((p) => p + 1); // al elegir se avanza solo: una pregunta, un toque
+      if (this.paso() === PREGUNTAS.length) this.revelar();
+    };
+    const [btn, barra, titulo, opciones] = [ev?.currentTarget as HTMLElement | null, this.barra(), this.titulo(), this.opcionesEl()];
+    if (!btn || !barra || !titulo || !opciones || matchMedia('(prefers-reduced-motion: reduce)').matches) return avanzar();
+    this.ocupado = true;
+    const encendidas = Math.round((Math.round(((this.paso() + 1) / PREGUNTAS.length) * 100) / 100) * 24);
+    salidaPregunta(btn, barra.nativeElement, titulo.nativeElement, opciones.nativeElement, encendidas - 1, () => {
+      avanzar();
+      afterNextRender(() => {
+        const [t, o] = [this.titulo(), this.opcionesEl()];
+        if (this.pregunta() && t && o) entradaPregunta(t.nativeElement, o.nativeElement, () => (this.ocupado = false));
+        else this.ocupado = false; // era la última: lo toma la animación del resultado
+      }, { injector: this.injector });
+    });
   }
 
   private revelar() {
@@ -187,6 +206,7 @@ export class Calculator {
   private animacion?: gsap.core.Timeline;
 
   atras() {
+    if (this.ocupado) return;
     this.animacion?.kill();
     this.animacion = undefined;
     this.fase.set('preguntas');
