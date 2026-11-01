@@ -12,10 +12,11 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
   imports: [],
   template: `
     <section class="cotizador">
-      <div class="progreso" role="progressbar" aria-label="Avance del cotizador"
+      <div class="progreso" [class.ola]="fase() === 'revelando'" [class.fusion]="fase() === 'resultado'"
+           role="progressbar" aria-label="Avance del cotizador"
            [attr.aria-valuenow]="porcentaje()" aria-valuemin="0" aria-valuemax="100">
         @for (c of celdas(); track $index) {
-          <i [class.on]="c" [style.animation-delay.ms]="($index * 137) % 900"></i>
+          <i [class.on]="c" [style.--i]="$index" [style.--t.ms]="($index * 137) % 900"></i>
         }
       </div>
       <p class="paso">{{ etiquetaPaso() }}</p>
@@ -31,7 +32,10 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
           }
         </div>
         @if (paso() > 0) { <button type="button" class="atras" (click)="atras()">← Atrás</button> }
+      } @else if (fase() === 'revelando') {
+        <p class="preparando">Armando tu propuesta…</p>
       } @else {
+       <div class="resultado">
         <p class="kicker">{{ esPrincipal() ? 'El que más te conviene' : 'Esta opción' }} · {{ pctActivo() }}%</p>
         <h1>{{ servicio()?.nombre }}</h1>
         <p class="descripcion">{{ descripcion() }}</p>
@@ -76,6 +80,7 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
           </form>
           <button type="button" class="atras" (click)="atras()">← Cambiar respuestas</button>
         }
+       </div>
       }
     </section>
   `,
@@ -88,13 +93,15 @@ export class Calculator {
 
   readonly preguntas = PREGUNTAS;
   paso = signal(0);
+  /** preguntas → revelando (la barra se llena en ola, ~1 s) → resultado (la barra se funde y descubre la propuesta). */
+  fase = signal<'preguntas' | 'revelando' | 'resultado'>('preguntas');
   respuestas = signal<Record<string, string>>({});
   estado = signal<'listo' | 'enviando' | 'enviado' | 'error'>('listo');
 
   pregunta = computed(() => PREGUNTAS[this.paso()] ?? null);
   /** Las preguntas llenan la barra hasta el 85 %; el resultado la completa. */
-  porcentaje = computed(() => (this.estado() === 'enviado' ? 100 : Math.round((this.paso() / (PREGUNTAS.length + 1)) * 100)));
-  etiquetaPaso = computed(() => (this.pregunta() ? `Pregunta ${this.paso() + 1} de ${PREGUNTAS.length}` : 'Tu propuesta'));
+  porcentaje = computed(() => Math.round((this.paso() / PREGUNTAS.length) * 100));
+  etiquetaPaso = computed(() => (this.pregunta() ? `Pregunta ${this.paso() + 1} de ${PREGUNTAS.length}` : this.fase() === 'revelando' ? 'Listo' : 'Tu propuesta'));
   ranking = computed(() => recomendar(this.respuestas()));
   /** Opción que el visitante abrió en "Otras opciones"; si no, la de mayor afinidad. */
   seleccionada = signal<string | null>(null);
@@ -125,9 +132,17 @@ export class Calculator {
     this.seleccionada.set(null);
     this.respuestas.update((r) => ({ ...r, [pregunta]: opcion }));
     this.paso.update((p) => p + 1); // al elegir se avanza solo: una pregunta, un toque
+    if (this.paso() === PREGUNTAS.length) this.revelar();
+  }
+
+  private revelar() {
+    const sinAnimacion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.fase.set(sinAnimacion ? 'resultado' : 'revelando');
+    if (!sinAnimacion) setTimeout(() => this.fase.set('resultado'), 1100);
   }
 
   atras() {
+    this.fase.set('preguntas');
     this.seleccionada.set(null);
     this.paso.update((p) => Math.max(0, p - 1));
   }
