@@ -41,11 +41,16 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 @keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
 @media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } .incluye, .incluye::after, .flecha { transition: none; } }
 
-.otras { display: grid; gap: 0.6rem; }
-.otra { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; align-items: start; text-align: left; padding: 0.85rem 1rem; border: 1px solid var(--stone); border-radius: 14px; background: #fff; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s; }
-.otra:hover { border-color: var(--jade); }
-.otra small { display: block; margin-top: 0.15rem; font-size: 0.85rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
-.pct { font-weight: 700; color: var(--jade); min-width: 2.6rem; }
+.otras { display: flex; gap: 1.2rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.6rem; scrollbar-width: none; }
+.otras::-webkit-scrollbar { display: none; }
+.otra { flex: none; width: min(15rem, 68%); scroll-snap-align: start; display: block; text-align: left; padding: 0.6rem 0.1rem 0; border: 0; border-top: 2px solid var(--jade); background: none; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
+.otra:hover { border-top-color: var(--yellow); transform: translateY(-2px); }
+.otra small { display: block; margin-top: 0.15rem; font-size: 0.85rem; line-height: 1.35; color: color-mix(in srgb, var(--night) 65%, transparent); }
+.barra { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; height: 8px; margin: 0.1rem 0 0.5rem; }
+.barra i { border-radius: 1px; background: color-mix(in srgb, var(--jade) 14%, transparent); }
+.barra i.on { background: var(--jade); }
+.pct { display: block; font-size: 0.78rem; font-weight: 800; color: var(--jade); }
+@media (max-width: 600px) { .icono-px { margin-inline: auto; } .cabecera { justify-content: center; } }
 
 .vermas { margin: 0.2rem 0 0.8rem; padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--jade); cursor: pointer; text-decoration: underline; }
 .flecha { display: inline-block; transition: transform 0.3s; text-decoration: none; }

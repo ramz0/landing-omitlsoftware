@@ -99,8 +99,9 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
           <div class="otras">
             @for (o of otras(); track o.id) {
               <button type="button" class="otra" (click)="seleccionada.set(o.id); abierto.set(false)">
+                <span class="barra" aria-hidden="true">@for (n of diez; track n) { <i [class.on]="n < o.pct / 10"></i> }</span>
                 <span class="pct">{{ o.pct }}%</span>
-                <span><b>{{ o.nombre }}</b><small>{{ o.razon }}</small></span>
+                <b>{{ o.nombre }}</b><small>{{ o.razon }}</small>
               </button>
             }
           </div>
@@ -213,6 +214,7 @@ export class Calculator {
   celdas = computed(() => Array.from({ length: 24 }, (_, i) => i < Math.round((this.porcentaje() / 100) * 24)));
   /** Ícono de pixeles del servicio activo: una clase por celda (`on` jade, `y` amarillo, vacía). */
   celdasIcono = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing']).flatMap((fila) => [...fila].map((c) => (c === '#' ? 'on' : c === 'y' ? 'y' : ''))));
+  readonly diez = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   columnas = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing'])[0].length);
   extras = computed(() => Object.entries(this.respuestas()).flatMap(([p, o]) => EXTRAS[`${p}.${o}`] ?? []));
   modulos = computed(() => PROPUESTA[this.activo()] ?? []);
