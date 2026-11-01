@@ -99,9 +99,8 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
           <div class="otras">
             @for (o of otras(); track o.id) {
               <button type="button" class="otra" (click)="seleccionada.set(o.id); abierto.set(false)">
-                <span class="barra" aria-hidden="true">@for (n of diez; track n) { <i [class.on]="n < o.pct / 10"></i> }</span>
-                <span class="pct">{{ o.pct }}%</span>
-                <b>{{ o.nombre }}</b><small>{{ o.razon }}</small>
+                <span class="top"><span class="pct">{{ o.pct }}%</span><span class="barra" aria-hidden="true">@for (n of diez; track n) { <i [class.on]="n < o.pct / 10"></i> }</span></span>
+                <b>{{ o.nombre }}</b><small>{{ o.razon }}</small><span class="flecha" aria-hidden="true">→</span>
               </button>
             }
           </div>

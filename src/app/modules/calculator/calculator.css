@@ -41,15 +41,27 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 @keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
 @media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } .incluye, .incluye::after, .flecha { transition: none; } }
 
+/* Móvil: carrusel horizontal sin caja, barra arriba del porcentaje. Desktop: tarjetas blancas en fila con flecha. */
 .otras { display: flex; gap: 1.2rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.6rem; scrollbar-width: none; }
 .otras::-webkit-scrollbar { display: none; }
-.otra { flex: none; width: min(15rem, 68%); scroll-snap-align: start; display: block; text-align: left; padding: 0.6rem 0.1rem 0; border: 0; border-top: 2px solid var(--jade); background: none; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
-.otra:hover { border-top-color: var(--yellow); transform: translateY(-2px); }
+.otra { flex: none; width: min(15rem, 68%); scroll-snap-align: start; display: flex; flex-direction: column; text-align: left; padding: 0.6rem 0.1rem 0; border: 0; border-top: 2px solid var(--jade); background: none; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s; }
 .otra small { display: block; margin-top: 0.15rem; font-size: 0.85rem; line-height: 1.35; color: color-mix(in srgb, var(--night) 65%, transparent); }
+.top { display: flex; flex-direction: column-reverse; }
 .barra { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; height: 8px; margin: 0.1rem 0 0.5rem; }
 .barra i { border-radius: 1px; background: color-mix(in srgb, var(--jade) 14%, transparent); }
 .barra i.on { background: var(--jade); }
 .pct { display: block; font-size: 0.78rem; font-weight: 800; color: var(--jade); }
+.flecha { display: none; }
+@media (min-width: 601px) {
+  .otras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; overflow: visible; }
+  .otra { width: auto; padding: 0.9rem 1rem; border: 1px solid var(--stone); border-top: 3px solid var(--jade); border-radius: 12px; background: #fff; }
+  .otra:hover { border-top-color: var(--yellow); transform: translateY(-3px); box-shadow: 0 8px 18px -10px var(--night); }
+  .top { flex-direction: row; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+  .top .barra { flex: 1; margin: 0; }
+  .flecha { display: block; margin-top: auto; padding-top: 0.6rem; align-self: flex-end; font-weight: 800; color: var(--jade); transition: transform 0.15s; }
+  .otra:hover .flecha { transform: translateX(5px); }
+}
+@media (max-width: 600px) { .otra:hover { border-top-color: var(--yellow); transform: translateY(-2px); } }
 @media (max-width: 600px) { .icono-px { margin-inline: auto; } .cabecera { justify-content: center; } }
 
 .vermas { margin: 0.2rem 0 0.8rem; padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--jade); cursor: pointer; text-decoration: underline; }
