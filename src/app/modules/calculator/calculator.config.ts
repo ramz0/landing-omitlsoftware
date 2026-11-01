@@ -83,11 +83,12 @@ export const PREGUNTAS: Pregunta[] = [
   },
   {
     id: 'urgencia',
-    titulo: '¿Para cuándo lo necesitas?',
+    titulo: '¿Para cuándo te gustaría tenerlo listo?',
     opciones: [
-      { id: 'sinprisa', texto: 'Sin prisa' },
-      { id: 'pronto', texto: 'En 1 o 2 meses', factor: 1.1 },
-      { id: 'urgente', texto: 'Lo antes posible', factor: 1.3 },
+      { id: 'urgente', texto: 'Lo antes posible', detalle: 'En 1 o 2 semanas, si el alcance lo permite', factor: 1.3 },
+      { id: 'mes', texto: 'En un mes aproximadamente', factor: 1.1 },
+      { id: 'trimestre', texto: 'En 2 o 3 meses' },
+      { id: 'explorando', texto: 'Todavía estoy explorando opciones' },
     ],
   },
   {
