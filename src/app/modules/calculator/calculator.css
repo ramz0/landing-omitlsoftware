@@ -30,3 +30,9 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .error { color: #b3261e; }
 @keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
 @media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } }
+
+.otras { display: grid; gap: 0.6rem; }
+.otra { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; align-items: start; text-align: left; padding: 0.85rem 1rem; border: 1px solid var(--stone); border-radius: 14px; background: #fff; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s; }
+.otra:hover { border-color: var(--jade); }
+.otra small { display: block; margin-top: 0.15rem; font-size: 0.85rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
+.pct { font-weight: 700; color: var(--jade); min-width: 2.6rem; }

@@ -111,9 +111,9 @@ export const PUNTO_DE_PARTIDA: Record<string, string> = {
 /** Redondea a $500 (hasta $20 mil) o $1,000 para no aparentar una precisión que no hay. */
 const redondear = (n: number) => { const paso = n < 20000 ? 500 : 1000; return Math.round(n / paso) * paso; };
 
-/** Rango (±20 %) o `null` si el servicio se cotiza aparte. */
-export function cotizar(respuestas: Record<string, string>): { min: number; max: number } | null {
-  const base = BASE[respuestas['objetivo']];
+/** Rango (±20 %) del servicio indicado, o `null` si se cotiza aparte. */
+export function cotizar(respuestas: Record<string, string>, servicio: string): { min: number; max: number } | null {
+  const base = BASE[servicio];
   if (base == null) return null;
   let precio = base;
   let suma = 0;
@@ -124,4 +124,48 @@ export function cotizar(respuestas: Record<string, string>): { min: number; max:
   }
   precio += suma;
   return { min: redondear(precio * 0.8), max: redondear(precio * 1.2) };
+}
+
+/** Puntos que cada respuesta le da a cada servicio. Lo que se eligió en `objetivo` pesa mucho; el resto matiza. */
+const AFINIDAD: Record<string, Record<string, Record<string, number>>> = {
+  objetivo: {
+    landing: { landing: 10 }, tienda: { tienda: 10 }, software: { software: 10 },
+    movil: { movil: 10 }, llamadas: { llamadas: 10 }, pos: { pos: 10 },
+  },
+  hoy: {
+    nada: { landing: 2 },
+    papel: { software: 3, pos: 2 },
+    whatsapp: { tienda: 2, landing: 1, llamadas: 1 },
+    sistema: { software: 3 },
+  },
+  tamano: {
+    chico: { landing: 1 },
+    mediano: { software: 1, pos: 1 },
+    grande: { software: 3, llamadas: 1 },
+  },
+  urgencia: { urgente: { landing: 1 } },
+  marca: { no: { landing: 1 } },
+};
+
+/** Por qué una opción puede convenir aunque no sea la principal. */
+export const RAZON: Record<string, string> = {
+  landing: 'Si buscas solo posicionamiento en Google Maps o algo más sencillo, sin carrito, precios ni cobros, una landing es tu opción ideal.',
+  tienda: 'Si quieres vender por internet con inventario, cobros y envíos, una tienda en línea es lo que necesitas.',
+  software: 'En base a los procesos que nos cuentas, un sistema hecho a tu medida puede ser muy relevante.',
+  movil: 'Si quieres que tus clientes o tu equipo te tengan siempre en su celular, una app es el siguiente paso.',
+  llamadas: 'Si cuentas con una base de datos de clientes o prospectos, un agente de llamadas podría ser relevante para tu negocio.',
+  pos: 'Si cobras en mostrador y llevas inventario, un punto de venta te ahorra el corte de caja y los conteos.',
+};
+
+/** Porcentaje de afinidad por servicio (suma 100), de mayor a menor. Cada servicio parte de medio punto para que nunca desaparezca. */
+export function recomendar(respuestas: Record<string, string>): { id: string; pct: number }[] {
+  const puntos: Record<string, number> = Object.fromEntries(Object.keys(BASE).map((id) => [id, 0.5]));
+  for (const [preg, opcion] of Object.entries(respuestas))
+    for (const [id, n] of Object.entries(AFINIDAD[preg]?.[opcion] ?? {})) puntos[id] += n;
+  const total = Object.values(puntos).reduce((a, b) => a + b, 0);
+  const filas = Object.entries(puntos).map(([id, p]) => ({ id, exacto: (p / total) * 100, pct: Math.floor((p / total) * 100) }));
+  // Método del mayor resto: los enteros suman 100 exactos.
+  let falta = 100 - filas.reduce((a, f) => a + f.pct, 0);
+  for (const f of [...filas].sort((a, b) => (b.exacto % 1) - (a.exacto % 1))) if (falta-- > 0) f.pct++;
+  return filas.map(({ id, pct }) => ({ id, pct })).sort((a, b) => b.pct - a.pct);
 }
