@@ -255,3 +255,10 @@ export const FORMAS_PAGO = [
   { id: 'mixto', corto: 'Inicial + mensualidad menor' },
   { id: 'mensual', corto: 'Solo mensualidad' },
 ];
+
+/** Lo que dice la mascota al elegir cada forma de pago en el resultado. */
+export const REACCION_PAGO: Record<string, string> = {
+  unico: 'Un solo pago y listo: sin mensualidades, el proyecto es tuyo desde el primer día.',
+  mixto: 'Arrancas con un pago menor y una mensualidad que incluye mantenimiento y mejoras.',
+  mensual: 'Sin pago grande al inicio: pagas mes a mes y las mejoras van incluidas.',
+};

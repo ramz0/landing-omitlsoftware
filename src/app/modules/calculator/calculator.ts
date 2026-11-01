@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 
 import { ServiciosService } from '@core/services/servicios.service';
+import { Mascota, Pose } from '@shared/components/mascota/mascota';
 import { PRODUCTO } from '@shared/components/form-contacto/form-contacto';
 import { environment } from '../../../environments/environment';
 import gsap from 'gsap';
@@ -9,12 +10,12 @@ import gsap from 'gsap';
 import { entradaPregunta, revelar, salidaPregunta } from './calculator.animacion';
 import { ICONOS } from './calculator.iconos';
 import { ICONO_OPCION, TRAZOS } from './calculator.iconos-opcion';
-import { DESCRIPCION, FORMAS_PAGO, EXTRAS, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
+import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
   selector: 'app-calculator',
-  imports: [],
+  imports: [Mascota],
   template: `
     <section class="cotizador">
       <div #barra class="progreso" role="progressbar" aria-label="Avance del cotizador"
@@ -79,7 +80,7 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTID
           </div>
          }
           <div class="formas">
-            <p class="formas-t">{{ textoPago() }}</p>
+            <app-mascota [pose]="poseMascota()" [texto]="dichoMascota()" />
             <div class="formas-b">
               @for (f of formas(); track f.id) {
                 <button type="button" class="forma" (click)="cambiarPago(f.id)">{{ f.corto }}</button>
@@ -179,10 +180,24 @@ export class Calculator {
     const actual = this.respuestas()['pago'] ?? 'unico';
     return FORMAS_PAGO.filter((f) => f.id !== actual);
   });
-  textoPago = computed(() => (this.respuestas()['pago'] ?? 'unico') === 'unico' ? '¿No te convence el pago único? Mira cómo se vería en mensualidades:' : '¿Prefieres otra forma de pago? Prueba:');
+  /** Lo que dice la mascota: invitación al principio y, al cambiar de pago, una reacción a lo elegido. */
+  private reaccion = signal<string | null>(null);
+  dichoMascota = computed(
+    () => this.reaccion() ?? ('¡Ey! También nos ajustamos a tu forma de pagar. ' + ((this.respuestas()['pago'] ?? 'unico') === 'unico' ? '¿Lo quieres ver en mensualidades?' : '¿Probamos otra?')),
+  );
+  poseMascota = signal<Pose>('saluda');
+  private tPose?: ReturnType<typeof setTimeout>;
   /** Cambia el pago desde el resultado; queda en las respuestas, así la propuesta enviada lo lleva. */
   cambiarPago(id: string) {
     this.respuestas.update((r) => ({ ...r, pago: id }));
+    this.reaccion.set(REACCION_PAGO[id]);
+    // Piensa mientras "recalcula" y luego reacciona: celebra si se alivia el pago inicial, señala los botones si no.
+    clearTimeout(this.tPose);
+    this.poseMascota.set('piensa');
+    this.tPose = setTimeout(() => {
+      this.poseMascota.set(id === 'unico' ? 'senala' : 'celebra');
+      this.tPose = setTimeout(() => this.poseMascota.set('senala'), 1800);
+    }, 700);
   }
   /** "Ver qué incluye" desplegado; se cierra al cambiar de opción o de respuestas. */
   abierto = signal(false);
@@ -249,6 +264,9 @@ export class Calculator {
     this.animacion?.kill();
     this.animacion = undefined;
     this.fase.set('preguntas');
+    clearTimeout(this.tPose);
+    this.reaccion.set(null);
+    this.poseMascota.set('saluda');
     this.seleccionada.set(null);
     this.abierto.set(false);
     this.paso.update((p) => Math.max(0, p - 1));

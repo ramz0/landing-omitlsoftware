@@ -1,0 +1,19 @@
+:host { display: flex; align-items: flex-end; gap: 0.9rem; }
+
+.mascota { position: relative; flex: none; width: 131px; height: 124px; animation: respira 1.6s steps(1) infinite; }
+.pj { position: absolute; inset: 0 0 8px; transform-origin: bottom center; }
+.pj img { position: absolute; bottom: 0; left: 50%; translate: -50% 0; image-rendering: pixelated; opacity: 0; }
+.pj img.visible { opacity: 1; }
+.sombra { position: absolute; bottom: 0; left: 50%; width: 70px; height: 8px; margin-left: -35px; border-radius: 50%; background: color-mix(in srgb, var(--night) 25%, transparent); }
+@keyframes respira { 50% { transform: translateY(-2px); } }
+
+.globo {
+  position: relative; margin: 0 0 1.4rem; padding: 0.7rem 0.95rem; min-height: 3.1rem; flex: 1; font-size: 0.95rem; font-weight: 600; line-height: 1.4;
+  background: #fff; border: 2px solid var(--night); border-radius: 12px; box-shadow: 3px 3px 0 var(--night);
+}
+/* Colita del globo apuntando a la mascota. */
+.globo::before { content: ''; position: absolute; left: -9px; bottom: 14px; width: 14px; height: 14px; background: #fff; border-left: 2px solid var(--night); border-bottom: 2px solid var(--night); transform: rotate(45deg); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+@media (max-width: 480px) { .mascota { width: 100px; } }
+@media (prefers-reduced-motion: reduce) { .mascota { animation: none; } }
