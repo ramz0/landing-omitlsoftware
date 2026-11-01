@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 
+import { RouterLink } from '@angular/router';
+
+import { ProyectosService } from '@core/services/proyectos.service';
 import { ServiciosService } from '@core/services/servicios.service';
 import { Mascota, Pose } from '@shared/components/mascota/mascota';
 import { PRODUCTO } from '@shared/components/form-contacto/form-contacto';
@@ -15,7 +18,7 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
   selector: 'app-calculator',
-  imports: [Mascota],
+  imports: [Mascota, RouterLink],
   template: `
     <section class="cotizador">
       <div #barra class="progreso" role="progressbar" aria-label="Avance del cotizador"
@@ -106,6 +109,19 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
           </div>
         }
 
+        @if (hechos().length) {
+          <h2>Lo que ya hemos hecho</h2>
+          <div class="hechos">
+            @for (p of hechos(); track p.id) {
+              <a class="hecho" routerLink="/proyectos" [queryParams]="{ tipo: p.categoria }">
+                @if (p.video) { <img [src]="p.video.poster" [alt]="p.nombre" loading="lazy" /> } @else { <span class="sin-img"></span> }
+                <span class="etq">{{ p.etiqueta }}</span>
+                <b>{{ p.nombre }}</b>
+              </a>
+            }
+          </div>
+        }
+
         @if (estado() === 'enviado') {
           <p class="ok">¡Gracias! Te escribimos o llamamos pronto con la propuesta.</p>
         } @else {
@@ -133,6 +149,7 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
 export class Calculator {
   private http = inject(HttpClient);
   private servicios = inject(ServiciosService).servicios;
+  private proyectos = inject(ProyectosService).proyectos;
 
   readonly preguntas = PREGUNTAS;
   paso = signal(0);
@@ -207,6 +224,12 @@ export class Calculator {
       .slice(0, 3)
       .map((r) => ({ ...r, nombre: this.servicios().find((s) => s.id === r.id)?.nombre ?? r.id, razon: RAZON[r.id] })),
   );
+  /** Proyectos del tipo del servicio activo y, después, de los de mayor afinidad; sin repetir y hasta 6. */
+  hechos = computed(() => {
+    const tipos = [this.activo(), ...this.otras().map((o) => o.id)].map((id) => this.servicios().find((s) => s.id === id)?.tipo);
+    const orden = [...new Set(tipos)];
+    return this.proyectos().filter((p) => orden.includes(p.categoria)).sort((a, b) => orden.indexOf(a.categoria) - orden.indexOf(b.categoria)).slice(0, 6);
+  });
   descripcion = computed(() => DESCRIPCION[this.activo()] ?? '');
   partida = computed(() => PUNTO_DE_PARTIDA[this.respuestas()['hoy']] ?? '');
   /** La barra son 24 celdas tipo pixel; las encendidas siguen al avance. */

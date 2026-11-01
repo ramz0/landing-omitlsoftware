@@ -100,3 +100,12 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 li:nth-child(3n + 1) { --trazo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.8L38 2.4' fill='none' stroke='%23f3c649' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
 li:nth-child(3n + 2) { --trazo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8' preserveAspectRatio='none'%3E%3Cpath d='M2 2.4L38 5.8' fill='none' stroke='%23f3c649' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
 li:nth-child(3n) { --trazo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5L38 3.2' fill='none' stroke='%23f3c649' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+
+/* "Lo que ya hemos hecho": tira horizontal (móvil y desktop) con proyectos del tipo recomendado y los siguientes en afinidad. */
+.hechos { display: flex; gap: 0.8rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.6rem; scrollbar-width: none; }
+.hechos::-webkit-scrollbar { display: none; }
+.hecho { flex: none; width: min(13rem, 62%); scroll-snap-align: start; display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0.5rem 0.8rem; border: 1px solid var(--stone); border-radius: 12px; background: #fff; color: var(--night); text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; }
+.hecho:hover { transform: translateY(-3px); box-shadow: 0 8px 18px -10px var(--night); }
+.hecho img, .sin-img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; background: color-mix(in srgb, var(--jade) 10%, transparent); margin-bottom: 0.3rem; }
+.etq { padding: 0 0.2rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--jade); }
+.hecho b { padding: 0 0.2rem; font-size: 0.95rem; line-height: 1.3; }
