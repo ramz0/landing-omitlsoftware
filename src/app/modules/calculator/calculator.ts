@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { ServiciosService } from '@core/services/servicios.service';
 import { PRODUCTO } from '@shared/components/form-contacto/form-contacto';
 import { environment } from '../../../environments/environment';
-import { PREGUNTAS, PROPUESTA, cotizar } from './calculator.config';
+import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, cotizar } from './calculator.config';
 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
@@ -15,7 +15,9 @@ import { PREGUNTAS, PROPUESTA, cotizar } from './calculator.config';
     <section class="cotizador">
       <div class="progreso" role="progressbar" aria-label="Avance del cotizador"
            [attr.aria-valuenow]="porcentaje()" aria-valuemin="0" aria-valuemax="100">
-        <div class="barra" [style.width.%]="porcentaje()"></div>
+        @for (c of celdas(); track $index) {
+          <i [class.on]="c" [style.animation-delay.ms]="($index * 137) % 900"></i>
+        }
       </div>
       <p class="paso">{{ etiquetaPaso() }}</p>
 
@@ -31,7 +33,10 @@ import { PREGUNTAS, PROPUESTA, cotizar } from './calculator.config';
         </div>
         @if (paso() > 0) { <button type="button" class="atras" (click)="atras()">← Atrás</button> }
       } @else {
-        <h1>Tu proyecto: {{ servicio()?.nombre }}</h1>
+        <p class="kicker">Podemos ayudarte con</p>
+        <h1>{{ servicio()?.nombre }}</h1>
+        <p class="descripcion">{{ descripcion() }}</p>
+        <p class="partida">Partimos de: <b>{{ partida() }}</b>.</p>
         @if (rango(); as r) {
           <p class="rango">{{ r.min | currency: 'MXN' : 'symbol-narrow' : '1.0-0' }} – {{ r.max | currency: 'MXN' : 'symbol-narrow' : '1.0-0' }}</p>
           <p class="nota">Estimado sin IVA. El precio final lo confirmamos contigo en una llamada.</p>
@@ -39,7 +44,7 @@ import { PREGUNTAS, PROPUESTA, cotizar } from './calculator.config';
           <p class="rango chico">Lo cotizamos contigo en una llamada</p>
           <p class="nota">Este tipo de proyecto depende de lo que necesites; no queremos darte un número al aire.</p>
         }
-        <h2>Esto es lo que te proponemos incluir</h2>
+        <h2>Lo que te proponemos incluir</h2>
         <ul class="propuesta">
           @for (m of modulos(); track m) { <li>{{ m }}</li> }
         </ul>
@@ -81,6 +86,10 @@ export class Calculator {
   etiquetaPaso = computed(() => (this.pregunta() ? `Pregunta ${this.paso() + 1} de ${PREGUNTAS.length}` : 'Tu propuesta'));
   servicio = computed(() => this.servicios().find((s) => s.id === this.respuestas()['objetivo']));
   rango = computed(() => cotizar(this.respuestas()));
+  descripcion = computed(() => DESCRIPCION[this.respuestas()['objetivo']] ?? '');
+  partida = computed(() => PUNTO_DE_PARTIDA[this.respuestas()['hoy']] ?? '');
+  /** La barra son 24 celdas tipo pixel; las encendidas siguen al avance. */
+  celdas = computed(() => Array.from({ length: 24 }, (_, i) => i < Math.round((this.porcentaje() / 100) * 24)));
   modulos = computed(() => PROPUESTA[this.respuestas()['objetivo']] ?? []);
 
   elegir(pregunta: string, opcion: string) {

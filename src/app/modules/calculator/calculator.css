@@ -1,6 +1,9 @@
 .cotizador { width: min(680px, 100% - 2.5rem); margin: 0 auto; padding: 2rem 0 4rem; }
-.progreso { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--jade) 15%, transparent); overflow: hidden; }
-.barra { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--jade), var(--yellow)); transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+/* Barra de pixeles: celdas apagadas en jade tenue; las encendidas titilan entre tonos del mismo jade. */
+.progreso { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; height: 14px; }
+.progreso i { border-radius: 2px; background: color-mix(in srgb, var(--jade) 14%, transparent); transition: background 0.3s; }
+.progreso i.on { background: var(--jade); animation: titila 1.8s steps(6, end) infinite; }
+@keyframes titila { 0%, 100% { filter: brightness(1); } 35% { filter: brightness(1.45); } 70% { filter: brightness(0.8); } }
 .paso { margin: 0.6rem 0 1.5rem; font-size: 0.85rem; color: color-mix(in srgb, var(--night) 60%, transparent); }
 h1 { font-size: clamp(1.5rem, 4vw, 2rem); margin: 0 0 1.2rem; color: var(--night); }
 h2 { font-size: 1.1rem; margin: 1.8rem 0 0.6rem; color: var(--night); }
@@ -11,6 +14,9 @@ h2 { font-size: 1.1rem; margin: 1.8rem 0 0.6rem; color: var(--night); }
 .opcion.sel { border-color: var(--jade); background: color-mix(in srgb, var(--jade) 8%, #fff); }
 .opcion:focus-visible { outline: 2px solid var(--jade); outline-offset: 2px; }
 .atras { margin-top: 1.2rem; border: 0; background: none; font: inherit; color: var(--jade); cursor: pointer; text-decoration: underline; padding: 0; }
+.kicker { margin: 0 0 0.2rem; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--jade); }
+.descripcion { font-size: 1.05rem; margin: 0 0 0.6rem; }
+.partida { margin: 0 0 1.2rem; font-size: 0.95rem; }
 .rango { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 700; color: var(--jade); margin: 0; }
 .rango.chico { font-size: 1.4rem; }
 .nota { font-size: 0.85rem; margin: 0.3rem 0 0; color: color-mix(in srgb, var(--night) 60%, transparent); }
@@ -23,4 +29,4 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .ok { font-weight: 600; color: var(--jade); }
 .error { color: #b3261e; }
 @keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
-@media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .barra { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } }

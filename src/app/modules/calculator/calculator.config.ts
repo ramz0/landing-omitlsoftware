@@ -90,6 +90,24 @@ export const PROPUESTA: Record<string, string[]> = {
   pos: ['Cobro en mostrador', 'Control de inventario', 'Corte de caja', 'Reporte de ventas'],
 };
 
+/** Qué le resuelve cada servicio, dicho en su idioma (se muestra en el resultado). */
+export const DESCRIPCION: Record<string, string> = {
+  landing: 'Un entorno de venta visible que puedes compartir por código QR, WhatsApp, Google Maps y donde te encuentren tus clientes.',
+  tienda: 'Tus productos en línea, con el inventario actualizado en automático, cobros y envíos.',
+  software: 'Es nuestra especialidad: creamos un sistema para ti y tu equipo, y trabajamos los procesos que nos contaste.',
+  movil: 'Tu servicio en el teléfono de tus clientes y de tu equipo, con avisos y acceso directo.',
+  llamadas: 'Un agente que llama y atiende por ti, con seguimiento y resumen de cada llamada.',
+  pos: 'Cobra, controla tu inventario y revisa las ventas del día desde la nube.',
+};
+
+/** Cómo suena el punto de partida del cliente en el resultado ("Partimos de…"). */
+export const PUNTO_DE_PARTIDA: Record<string, string> = {
+  nada: 'empezar desde cero, sin cargar con nada anterior',
+  papel: 'pasar tu papel y tu Excel a un sistema que se actualice solo',
+  whatsapp: 'ordenar lo que hoy manejas por WhatsApp y redes sociales',
+  sistema: 'mejorar o reemplazar lo que ya usas',
+};
+
 /** Redondea a $500 (hasta $20 mil) o $1,000 para no aparentar una precisión que no hay. */
 const redondear = (n: number) => { const paso = n < 20000 ? 500 : 1000; return Math.round(n / paso) * paso; };
 
