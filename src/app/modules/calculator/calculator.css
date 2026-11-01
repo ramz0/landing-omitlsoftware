@@ -36,7 +36,7 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .ok { font-weight: 600; color: var(--jade); }
 .error { color: #b3261e; }
 @keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
-@media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } .incluye, .flecha { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } .incluye, .incluye::after, .flecha { transition: none; } }
 
 .otras { display: grid; gap: 0.6rem; }
 .otra { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; align-items: start; text-align: left; padding: 0.85rem 1rem; border: 1px solid var(--stone); border-radius: 14px; background: #fff; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s; }
@@ -44,11 +44,14 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .otra small { display: block; margin-top: 0.15rem; font-size: 0.85rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
 .pct { font-weight: 700; color: var(--jade); min-width: 2.6rem; }
 
-.vermas { margin: 0 0 0.6rem; padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--jade); cursor: pointer; text-decoration: underline; }
+.vermas { margin: 0.2rem 0 0.8rem; padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--jade); cursor: pointer; text-decoration: underline; }
 .flecha { display: inline-block; transition: transform 0.3s; text-decoration: none; }
 .flecha.arriba { transform: rotate(180deg); }
-.incluye { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.incluye.abierto { grid-template-rows: 1fr; }
-.incluye > div { overflow: hidden; }
-.incluye .propuesta { padding-bottom: 0.8rem; }
+/* Cerrado se ven 2 puntos y el 3.º se pierde en una neblina; "Ver más" abre la lista completa. */
+.incluye { position: relative; max-height: 4.9rem; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.incluye::after { content: ''; position: absolute; inset: 0; pointer-events: none; transition: opacity 0.4s;
+  background: linear-gradient(to bottom, transparent 40%, var(--mist) 100%); }
+.incluye.abierto { max-height: 30rem; }
+.incluye.abierto::after { opacity: 0; }
+.incluye .propuesta { line-height: 1.5; padding-bottom: 0; }
 .rango small { font-size: 0.9rem; font-weight: 500; color: color-mix(in srgb, var(--night) 65%, transparent); }

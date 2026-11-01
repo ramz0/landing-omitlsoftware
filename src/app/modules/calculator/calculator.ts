@@ -46,16 +46,14 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago
         <h1>{{ servicio()?.nombre }}</h1>
         <p class="descripcion">{{ descripcion() }}</p>
         <p class="partida">Partimos de: <b>{{ partida() }}</b>.</p>
-        <button type="button" class="vermas" [attr.aria-expanded]="abierto()" (click)="abierto.set(!abierto())">
-          {{ abierto() ? 'Ver menos' : 'Ver qué incluye' }} <span class="flecha" [class.arriba]="abierto()">▾</span>
-        </button>
         <div class="incluye" [class.abierto]="abierto()">
-          <div>
-            <ul class="propuesta">
-              @for (m of modulos(); track m) { <li>{{ m }}</li> }
-            </ul>
-          </div>
+          <ul class="propuesta">
+            @for (m of modulos(); track m) { <li>{{ m }}</li> }
+          </ul>
         </div>
+        <button type="button" class="vermas" [attr.aria-expanded]="abierto()" (click)="abierto.set(!abierto())">
+          {{ abierto() ? 'Ver menos' : 'Ver más' }} <span class="flecha" [class.arriba]="abierto()">▾</span>
+        </button>
         @if (montosTexto(); as ms) {
           @for (m of ms; track m.etiqueta) {
             <p class="rango" [class.chico]="ms.length > 1">{{ m.valor }} <small>{{ m.etiqueta }}</small></p>
