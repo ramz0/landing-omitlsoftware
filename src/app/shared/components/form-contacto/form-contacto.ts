@@ -5,7 +5,7 @@ import { ServiciosService } from '@core/services/servicios.service';
 import { environment } from '../../../../environments/environment';
 
 /** Claves de empresas.datos_extra.productos en la API, por id de servicio de la landing. */
-const PRODUCTO: Record<string, string> = {
+export const PRODUCTO: Record<string, string> = {
   landing: 'landing_page', software: 'software_a_medida', movil: 'app_movil',
   llamadas: 'agente_llamadas', tienda: 'tienda_online', pos: 'punto_de_venta',
 };

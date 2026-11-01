@@ -1,0 +1,26 @@
+.cotizador { width: min(680px, 100% - 2.5rem); margin: 0 auto; padding: 2rem 0 4rem; }
+.progreso { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--jade) 15%, transparent); overflow: hidden; }
+.barra { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--jade), var(--yellow)); transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.paso { margin: 0.6rem 0 1.5rem; font-size: 0.85rem; color: color-mix(in srgb, var(--night) 60%, transparent); }
+h1 { font-size: clamp(1.5rem, 4vw, 2rem); margin: 0 0 1.2rem; color: var(--night); }
+h2 { font-size: 1.1rem; margin: 1.8rem 0 0.6rem; color: var(--night); }
+.opciones { display: grid; gap: 0.7rem; animation: aparece 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.opcion { display: grid; gap: 0.15rem; text-align: left; padding: 0.95rem 1.1rem; border: 2px solid var(--stone); border-radius: 14px; background: #fff; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
+.opcion span { font-size: 0.85rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
+.opcion:hover { border-color: var(--jade); transform: translateY(-1px); }
+.opcion.sel { border-color: var(--jade); background: color-mix(in srgb, var(--jade) 8%, #fff); }
+.opcion:focus-visible { outline: 2px solid var(--jade); outline-offset: 2px; }
+.atras { margin-top: 1.2rem; border: 0; background: none; font: inherit; color: var(--jade); cursor: pointer; text-decoration: underline; padding: 0; }
+.rango { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 700; color: var(--jade); margin: 0; }
+.rango.chico { font-size: 1.4rem; }
+.nota { font-size: 0.85rem; margin: 0.3rem 0 0; color: color-mix(in srgb, var(--night) 60%, transparent); }
+.propuesta { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.3rem; }
+form { display: grid; gap: 0.75rem; max-width: 460px; }
+input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12px; font: inherit; background: #fff; }
+.enviar { padding: 0.8rem 1.4rem; border: 0; border-radius: 999px; background: var(--yellow); color: var(--night); font: inherit; font-weight: 600; cursor: pointer; }
+.enviar:disabled { opacity: 0.6; cursor: wait; }
+.trampa { position: absolute; left: -9999px; }
+.ok { font-weight: 600; color: var(--jade); }
+.error { color: #b3261e; }
+@keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
+@media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .barra { transition: none; } }

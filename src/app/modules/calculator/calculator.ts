@@ -1,20 +1,113 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 
-import { EnConstruccion } from '@shared/components/en-construccion/en-construccion';
-import { FormContacto } from '@shared/components/form-contacto/form-contacto';
+import { ServiciosService } from '@core/services/servicios.service';
+import { PRODUCTO } from '@shared/components/form-contacto/form-contacto';
+import { environment } from '../../../environments/environment';
+import { PREGUNTAS, PROPUESTA, cotizar } from './calculator.config';
 
-/** /calculator: calculadora de presupuesto (aún en construcción); mientras, el formulario de contacto. */
+/** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
   selector: 'app-calculator',
-  imports: [EnConstruccion, FormContacto],
+  imports: [CurrencyPipe],
   template: `
-    <app-en-construccion titulo="Calculadora de presupuesto" mensaje="Estamos trabajando en esta vista: muy pronto podrás estimar el costo de tu proyecto aquí." />
-    <section class="contacto">
-      <h2>Mientras tanto, cuéntanos tu proyecto</h2>
-      <app-form-contacto />
+    <section class="cotizador">
+      <div class="progreso" role="progressbar" aria-label="Avance del cotizador"
+           [attr.aria-valuenow]="porcentaje()" aria-valuemin="0" aria-valuemax="100">
+        <div class="barra" [style.width.%]="porcentaje()"></div>
+      </div>
+      <p class="paso">{{ etiquetaPaso() }}</p>
+
+      @if (pregunta(); as p) {
+        <h1>{{ p.titulo }}</h1>
+        <div class="opciones">
+          @for (o of p.opciones; track o.id) {
+            <button type="button" class="opcion" [class.sel]="respuestas()[p.id] === o.id" (click)="elegir(p.id, o.id)">
+              <b>{{ o.texto }}</b>
+              @if (o.detalle) { <span>{{ o.detalle }}</span> }
+            </button>
+          }
+        </div>
+        @if (paso() > 0) { <button type="button" class="atras" (click)="atras()">← Atrás</button> }
+      } @else {
+        <h1>Tu proyecto: {{ servicio()?.nombre }}</h1>
+        @if (rango(); as r) {
+          <p class="rango">{{ r.min | currency: 'MXN' : 'symbol-narrow' : '1.0-0' }} – {{ r.max | currency: 'MXN' : 'symbol-narrow' : '1.0-0' }}</p>
+          <p class="nota">Estimado sin IVA. El precio final lo confirmamos contigo en una llamada.</p>
+        } @else {
+          <p class="rango chico">Lo cotizamos contigo en una llamada</p>
+          <p class="nota">Este tipo de proyecto depende de lo que necesites; no queremos darte un número al aire.</p>
+        }
+        <h2>Esto es lo que te proponemos incluir</h2>
+        <ul class="propuesta">
+          @for (m of modulos(); track m) { <li>{{ m }}</li> }
+        </ul>
+
+        @if (estado() === 'enviado') {
+          <p class="ok">¡Gracias! Te escribimos o llamamos pronto con la propuesta.</p>
+        } @else {
+          <h2>¿Te mandamos la propuesta?</h2>
+          <form #f (submit)="$event.preventDefault(); enviar(f)">
+            <input name="negocio" placeholder="Nombre del negocio" required maxlength="120" autocomplete="organization" />
+            <input name="contacto" placeholder="Tu nombre" required maxlength="120" autocomplete="name" />
+            <input name="telefono" type="tel" placeholder="Celular (10 dígitos)" required inputmode="tel" autocomplete="tel" />
+            <input name="web" class="trampa" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button type="submit" class="enviar" [disabled]="estado() === 'enviando'">{{ estado() === 'enviando' ? 'Enviando…' : 'Quiero mi propuesta' }}</button>
+            @if (estado() === 'error') {
+              <p class="error">No se pudo enviar. Intenta de nuevo o escríbenos a contacto&#64;omitlsoftware.com.mx.</p>
+            }
+          </form>
+          <button type="button" class="atras" (click)="atras()">← Cambiar respuestas</button>
+        }
+      }
     </section>
   `,
-  styles: '.contacto { width: min(1080px, 100% - 2.5rem); margin: 0 auto; padding: 2rem 0 4rem; }',
+  styleUrl: './calculator.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Calculator {}
+export class Calculator {
+  private http = inject(HttpClient);
+  private servicios = inject(ServiciosService).servicios;
+
+  readonly preguntas = PREGUNTAS;
+  paso = signal(0);
+  respuestas = signal<Record<string, string>>({});
+  estado = signal<'listo' | 'enviando' | 'enviado' | 'error'>('listo');
+
+  pregunta = computed(() => PREGUNTAS[this.paso()] ?? null);
+  /** Las preguntas llenan la barra hasta el 85 %; el resultado la completa. */
+  porcentaje = computed(() => (this.estado() === 'enviado' ? 100 : Math.round((this.paso() / (PREGUNTAS.length + 1)) * 100)));
+  etiquetaPaso = computed(() => (this.pregunta() ? `Pregunta ${this.paso() + 1} de ${PREGUNTAS.length}` : 'Tu propuesta'));
+  servicio = computed(() => this.servicios().find((s) => s.id === this.respuestas()['objetivo']));
+  rango = computed(() => cotizar(this.respuestas()));
+  modulos = computed(() => PROPUESTA[this.respuestas()['objetivo']] ?? []);
+
+  elegir(pregunta: string, opcion: string) {
+    this.respuestas.update((r) => ({ ...r, [pregunta]: opcion }));
+    this.paso.update((p) => p + 1); // al elegir se avanza solo: una pregunta, un toque
+  }
+
+  atras() {
+    this.paso.update((p) => Math.max(0, p - 1));
+  }
+
+  enviar(f: HTMLFormElement) {
+    if (!f.reportValidity()) return;
+    const d = new FormData(f);
+    const r = this.respuestas();
+    const rango = this.rango();
+    const resumen =
+      `Cotizador: ${PREGUNTAS.map((p) => `${p.id}=${r[p.id]}`).join(', ')}; ` +
+      (rango ? `rango ${rango.min}-${rango.max} MXN sin IVA` : 'se cotiza aparte');
+    const utm = Object.fromEntries([...new URLSearchParams(location.search)].filter(([k]) => k.startsWith('utm_')));
+    this.estado.set('enviando');
+    this.http
+      .post(`${environment.apiUrl}/api/leads`, {
+        negocio: d.get('negocio'), contacto: d.get('contacto'), telefono: d.get('telefono'),
+        otros: resumen, web: d.get('web'), utm,
+        productos: [PRODUCTO[r['objetivo']]].filter(Boolean),
+      })
+      .subscribe({ next: () => this.estado.set('enviado'), error: () => this.estado.set('error') });
+  }
+}
