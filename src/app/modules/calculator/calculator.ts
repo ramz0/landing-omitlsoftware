@@ -196,8 +196,8 @@ export class Calculator {
     this.poseMascota.set('piensa');
     this.tPose = setTimeout(() => {
       this.poseMascota.set(id === 'unico' ? 'senala' : 'celebra');
-      this.tPose = setTimeout(() => this.poseMascota.set('senala'), 1800);
-    }, 700);
+      this.tPose = setTimeout(() => this.poseMascota.set('senala'), 2600);
+    }, 900);
   }
   /** "Ver qué incluye" desplegado; se cierra al cambiar de opción o de respuestas. */
   abierto = signal(false);

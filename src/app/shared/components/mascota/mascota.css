@@ -1,9 +1,10 @@
 :host { display: flex; align-items: flex-end; gap: 0.9rem; }
 
 .mascota { position: relative; flex: none; width: 131px; height: 124px; animation: respira 1.6s steps(1) infinite; }
-.pj { position: absolute; inset: 0 0 8px; transform-origin: bottom center; }
+.pj { z-index: 1; position: absolute; inset: 0 0 8px; transform-origin: bottom center; }
 .pj img { position: absolute; bottom: 0; left: 50%; translate: -50% 0; image-rendering: pixelated; opacity: 0; }
 .pj img.visible { opacity: 1; }
+.confeti { position: absolute; left: 50%; top: -30px; width: calc(222px * 0.8); margin-left: calc(222px * -0.4); image-rendering: pixelated; pointer-events: none; opacity: 0; }
 .sombra { position: absolute; bottom: 0; left: 50%; width: 70px; height: 8px; margin-left: -35px; border-radius: 50%; background: color-mix(in srgb, var(--night) 25%, transparent); }
 @keyframes respira { 50% { transform: translateY(-2px); } }
 
