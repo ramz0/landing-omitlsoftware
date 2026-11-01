@@ -8,7 +8,7 @@ import gsap from 'gsap';
 
 import { revelar } from './calculator.animacion';
 import { ICONOS } from './calculator.iconos';
-import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, recomendar } from './calculator.config';
+import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
@@ -46,9 +46,21 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
         <h1>{{ servicio()?.nombre }}</h1>
         <p class="descripcion">{{ descripcion() }}</p>
         <p class="partida">Partimos de: <b>{{ partida() }}</b>.</p>
-        @if (rangoTexto(); as r) {
-          <p class="rango">{{ r }}</p>
-          <p class="nota">Estimado sin IVA. El precio final lo confirmamos contigo en una llamada.</p>
+        <button type="button" class="vermas" [attr.aria-expanded]="abierto()" (click)="abierto.set(!abierto())">
+          {{ abierto() ? 'Ver menos' : 'Ver qué incluye' }} <span class="flecha" [class.arriba]="abierto()">▾</span>
+        </button>
+        <div class="incluye" [class.abierto]="abierto()">
+          <div>
+            <ul class="propuesta">
+              @for (m of modulos(); track m) { <li>{{ m }}</li> }
+            </ul>
+          </div>
+        </div>
+        @if (montosTexto(); as ms) {
+          @for (m of ms; track m.etiqueta) {
+            <p class="rango" [class.chico]="ms.length > 1">{{ m.valor }} <small>{{ m.etiqueta }}</small></p>
+          }
+          <p class="nota">{{ notaPago() }}</p>
         } @else {
           <p class="rango chico">Lo cotizamos contigo en una llamada</p>
           <p class="nota">Este tipo de proyecto depende de lo que necesites; no queremos darte un número al aire.</p>
@@ -56,16 +68,11 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
           </div>
         </div>
         <div class="detalle" #detalle>
-        <h2>Lo que te proponemos incluir</h2>
-        <ul class="propuesta">
-          @for (m of modulos(); track m) { <li>{{ m }}</li> }
-        </ul>
-
         @if (otras().length) {
           <h2>Otras opciones para ti</h2>
           <div class="otras">
             @for (o of otras(); track o.id) {
-              <button type="button" class="otra" (click)="seleccionada.set(o.id)">
+              <button type="button" class="otra" (click)="seleccionada.set(o.id); abierto.set(false)">
                 <span class="pct">{{ o.pct }}%</span>
                 <span><b>{{ o.nombre }}</b><small>{{ o.razon }}</small></span>
               </button>
@@ -124,13 +131,22 @@ export class Calculator {
   esPrincipal = computed(() => this.activo() === this.ranking()[0].id);
   pctActivo = computed(() => this.ranking().find((r) => r.id === this.activo())?.pct ?? 0);
   servicio = computed(() => this.servicios().find((s) => s.id === this.activo()));
-  rango = computed(() => cotizar(this.respuestas(), this.activo()));
-  rangoTexto = computed(() => {
-    const r = this.rango();
-    if (!r) return '';
+  montos = computed(() => cotizarPago(this.respuestas(), this.activo()));
+  montosTexto = computed(() => {
+    const m = this.montos();
+    if (!m) return null;
     const f = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
-    return `${f.format(r.min)} – ${f.format(r.max)}`;
+    return m.map((x) => ({ etiqueta: x.etiqueta, valor: `${f.format(x.min)} – ${f.format(x.max)}` }));
   });
+  notaPago = computed(() => {
+    const pago = this.respuestas()['pago'];
+    const base = 'Estimado sin IVA. ';
+    if (pago === 'mensual') return base + 'Sin pago grande al inicio, con mejoras y actualizaciones cuando tu negocio las necesite. Las condiciones las confirmamos contigo en una llamada.';
+    if (pago === 'mixto') return base + 'Un pago inicial menor y una mensualidad que incluye mantenimiento y mejoras. Las condiciones las confirmamos contigo en una llamada.';
+    return base + 'El precio final lo confirmamos contigo en una llamada.';
+  });
+  /** "Ver qué incluye" desplegado; se cierra al cambiar de opción o de respuestas. */
+  abierto = signal(false);
   otras = computed(() =>
     this.ranking()
       .filter((r) => r.id !== this.activo())
@@ -148,6 +164,7 @@ export class Calculator {
 
   elegir(pregunta: string, opcion: string) {
     this.seleccionada.set(null);
+    this.abierto.set(false);
     this.respuestas.update((r) => ({ ...r, [pregunta]: opcion }));
     this.paso.update((p) => p + 1); // al elegir se avanza solo: una pregunta, un toque
     if (this.paso() === PREGUNTAS.length) this.revelar();
@@ -173,6 +190,7 @@ export class Calculator {
     this.animacion = undefined;
     this.fase.set('preguntas');
     this.seleccionada.set(null);
+    this.abierto.set(false);
     this.paso.update((p) => Math.max(0, p - 1));
   }
 
@@ -180,10 +198,10 @@ export class Calculator {
     if (!f.reportValidity()) return;
     const d = new FormData(f);
     const r = this.respuestas();
-    const rango = this.rango();
+    const montos = this.montos();
     const resumen =
       `Cotizador: ${PREGUNTAS.map((p) => `${p.id}=${r[p.id]}`).join(', ')}; afinidad ${this.ranking().map((x) => `${x.id} ${x.pct}%`).join(', ')}; ` +
-      (rango ? `rango ${rango.min}-${rango.max} MXN sin IVA` : 'se cotiza aparte');
+      (montos ? montos.map((m) => `${m.etiqueta} ${m.min}-${m.max}`).join(', ') + ' MXN sin IVA' : 'se cotiza aparte');
     const utm = Object.fromEntries([...new URLSearchParams(location.search)].filter(([k]) => k.startsWith('utm_')));
     this.estado.set('enviando');
     this.http

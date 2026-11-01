@@ -36,10 +36,19 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .ok { font-weight: 600; color: var(--jade); }
 .error { color: #b3261e; }
 @keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
-@media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .opciones { animation: none; } .progreso i.on { animation: none; } .incluye, .flecha { transition: none; } }
 
 .otras { display: grid; gap: 0.6rem; }
 .otra { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; align-items: start; text-align: left; padding: 0.85rem 1rem; border: 1px solid var(--stone); border-radius: 14px; background: #fff; font: inherit; color: var(--night); cursor: pointer; transition: border-color 0.15s; }
 .otra:hover { border-color: var(--jade); }
 .otra small { display: block; margin-top: 0.15rem; font-size: 0.85rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
 .pct { font-weight: 700; color: var(--jade); min-width: 2.6rem; }
+
+.vermas { margin: 0 0 0.6rem; padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--jade); cursor: pointer; text-decoration: underline; }
+.flecha { display: inline-block; transition: transform 0.3s; text-decoration: none; }
+.flecha.arriba { transform: rotate(180deg); }
+.incluye { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.incluye.abierto { grid-template-rows: 1fr; }
+.incluye > div { overflow: hidden; }
+.incluye .propuesta { padding-bottom: 0.8rem; }
+.rango small { font-size: 0.9rem; font-weight: 500; color: color-mix(in srgb, var(--night) 65%, transparent); }

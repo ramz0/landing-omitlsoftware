@@ -13,7 +13,7 @@ export interface Opcion {
 }
 
 export interface Pregunta {
-  id: 'objetivo' | 'hoy' | 'tamano' | 'gestion' | 'movilidad' | 'urgencia' | 'marca';
+  id: 'objetivo' | 'hoy' | 'tamano' | 'gestion' | 'movilidad' | 'pago' | 'urgencia' | 'marca';
   titulo: string;
   opciones: Opcion[];
 }
@@ -73,6 +73,15 @@ export const PREGUNTAS: Pregunta[] = [
     ],
   },
   {
+    id: 'pago',
+    titulo: '¿Cómo te gustaría pagar?',
+    opciones: [
+      { id: 'unico', texto: 'Un solo pago por el proyecto' },
+      { id: 'mixto', texto: 'Un pago inicial más una mensualidad menor', detalle: 'Incluye mantenimiento y mejoras' },
+      { id: 'mensual', texto: 'Solo una mensualidad', detalle: 'Mejoras y actualizaciones siempre que mi negocio las necesite' },
+    ],
+  },
+  {
     id: 'urgencia',
     titulo: '¿Para cuándo lo necesitas?',
     opciones: [
@@ -100,6 +109,13 @@ export const BASE: Record<string, number | null> = {
   llamadas: null,
   pos: null,
 };
+
+/** Mensualidad base (MXN sin IVA, negocio chico) cuando se paga por suscripción con mejoras y soporte continuos.
+ * ponytail: estimado a partir de mis contratos en nómina (Nexus, MiPaay), no de una tarifa publicada; ajustar con datos reales. */
+export const MENSUAL: Record<string, number | null> = { landing: 1500, tienda: 3500, software: 9000, movil: null, llamadas: null, pos: null };
+
+/** Con pago mixto: parte del precio único que se paga al inicio y parte de la mensualidad completa. */
+const MIXTO = { inicial: 0.5, mensual: 0.5 };
 
 /** Lo que nosotros proponemos incluir: el cliente no tiene que saber cuántas secciones necesita. */
 export const PROPUESTA: Record<string, string[]> = {
@@ -147,6 +163,22 @@ export function cotizar(respuestas: Record<string, string>, servicio: string): {
   return { min: redondear(precio * 0.8), max: redondear(precio * 1.2) };
 }
 
+export interface Monto { etiqueta: string; min: number; max: number }
+
+/** Montos según cómo quiere pagar (pago único, mensualidad o inicial + mensualidad); `null` si se cotiza aparte. */
+export function cotizarPago(respuestas: Record<string, string>, servicio: string): Monto[] | null {
+  const unico = cotizar(respuestas, servicio);
+  const base = MENSUAL[servicio];
+  if (!unico || base == null) return null;
+  const factor = PREGUNTAS.reduce((f, p) => f * (p.opciones.find((o) => o.id === respuestas[p.id])?.factor ?? 1), 1);
+  const mensual = (k: number) => ({ etiqueta: 'al mes', min: redondear(base * factor * k * 0.8), max: redondear(base * factor * k * 1.2) });
+  switch (respuestas['pago']) {
+    case 'mensual': return [mensual(1)];
+    case 'mixto': return [{ etiqueta: 'de inicio', min: redondear(unico.min * MIXTO.inicial), max: redondear(unico.max * MIXTO.inicial) }, mensual(MIXTO.mensual)];
+    default: return [{ etiqueta: 'pago único', ...unico }];
+  }
+}
+
 /** Puntos que cada respuesta le da a cada servicio. Lo que se eligió en `objetivo` pesa mucho; el resto matiza. */
 const AFINIDAD: Record<string, Record<string, Record<string, number>>> = {
   objetivo: {
@@ -174,6 +206,11 @@ const AFINIDAD: Record<string, Record<string, Record<string, number>>> = {
   movilidad: {
     equipo: { movil: 4, software: 1 },
     clientes: { movil: 3, tienda: 2 },
+  },
+  pago: {
+    unico: { landing: 1, tienda: 1 },
+    mixto: { software: 1, pos: 1, movil: 1 },
+    mensual: { software: 2, pos: 2, llamadas: 1, movil: 1 },
   },
   urgencia: { urgente: { landing: 1 } },
   marca: { no: { landing: 1 } },
