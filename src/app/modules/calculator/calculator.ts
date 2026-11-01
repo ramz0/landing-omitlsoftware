@@ -46,7 +46,7 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago
         <h1>{{ servicio()?.nombre }}</h1>
         <p class="descripcion">{{ descripcion() }}</p>
         <p class="partida">Partimos de: <b>{{ partida() }}</b>.</p>
-        <div class="incluye" [class.abierto]="abierto()">
+        <div class="incluye" [class.abierto]="abierto()" [style.--alto]="modulos().length * 2.1 + 'rem'">
           <ul class="propuesta">
             @for (m of modulos(); track m) { <li>{{ m }}</li> }
           </ul>

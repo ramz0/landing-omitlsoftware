@@ -48,10 +48,10 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .flecha { display: inline-block; transition: transform 0.3s; text-decoration: none; }
 .flecha.arriba { transform: rotate(180deg); }
 /* Cerrado se ven 2 puntos y el 3.º se pierde en una neblina; "Ver más" abre la lista completa. */
-.incluye { position: relative; max-height: 4.9rem; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.incluye::after { content: ''; position: absolute; inset: 0; pointer-events: none; transition: opacity 0.4s;
+.incluye { position: relative; max-height: 4.9rem; overflow: hidden; transition: max-height 0.9s cubic-bezier(0.45, 0, 0.2, 1); }
+.incluye::after { content: ''; position: absolute; inset: 0; pointer-events: none; transition: opacity 0.7s ease;
   background: linear-gradient(to bottom, transparent 40%, var(--mist) 100%); }
-.incluye.abierto { max-height: 30rem; }
+.incluye.abierto { max-height: var(--alto, 30rem); }
 .incluye.abierto::after { opacity: 0; }
 .incluye .propuesta { line-height: 1.5; padding-bottom: 0; }
 .rango small { font-size: 0.9rem; font-weight: 500; color: color-mix(in srgb, var(--night) 65%, transparent); }
