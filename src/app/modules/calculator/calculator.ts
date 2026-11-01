@@ -1,9 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 
 import { ServiciosService } from '@core/services/servicios.service';
 import { PRODUCTO } from '@shared/components/form-contacto/form-contacto';
 import { environment } from '../../../environments/environment';
+import gsap from 'gsap';
+
+import { revelar } from './calculator.animacion';
+import { ICONOS } from './calculator.iconos';
 import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, recomendar } from './calculator.config';
 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
@@ -12,8 +16,7 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
   imports: [],
   template: `
     <section class="cotizador">
-      <div class="progreso" [class.ola]="fase() === 'revelando'" [class.fusion]="fase() === 'resultado'"
-           role="progressbar" aria-label="Avance del cotizador"
+      <div #barra class="progreso" role="progressbar" aria-label="Avance del cotizador"
            [attr.aria-valuenow]="porcentaje()" aria-valuemin="0" aria-valuemax="100">
         @for (c of celdas(); track $index) {
           <i [class.on]="c" [style.--i]="$index" [style.--t.ms]="($index * 137) % 900"></i>
@@ -32,10 +35,13 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
           }
         </div>
         @if (paso() > 0) { <button type="button" class="atras" (click)="atras()">← Atrás</button> }
-      } @else if (fase() === 'revelando') {
-        <p class="preparando">Armando tu propuesta…</p>
       } @else {
        <div class="resultado">
+        <div class="cabecera">
+          <div #icono class="icono-px" [style.--cols]="columnas()" aria-hidden="true">
+            @for (c of celdasIcono(); track $index) { <i [class]="c"></i> }
+          </div>
+          <div class="info" #info>
         <p class="kicker">{{ esPrincipal() ? 'El que más te conviene' : 'Esta opción' }} · {{ pctActivo() }}%</p>
         <h1>{{ servicio()?.nombre }}</h1>
         <p class="descripcion">{{ descripcion() }}</p>
@@ -47,6 +53,9 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
           <p class="rango chico">Lo cotizamos contigo en una llamada</p>
           <p class="nota">Este tipo de proyecto depende de lo que necesites; no queremos darte un número al aire.</p>
         }
+          </div>
+        </div>
+        <div class="detalle" #detalle>
         <h2>Lo que te proponemos incluir</h2>
         <ul class="propuesta">
           @for (m of modulos(); track m) { <li>{{ m }}</li> }
@@ -80,6 +89,7 @@ import { DESCRIPCION, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizar, re
           </form>
           <button type="button" class="atras" (click)="atras()">← Cambiar respuestas</button>
         }
+        </div>
        </div>
       }
     </section>
@@ -93,15 +103,20 @@ export class Calculator {
 
   readonly preguntas = PREGUNTAS;
   paso = signal(0);
-  /** preguntas → revelando (la barra se llena en ola, ~1 s) → resultado (la barra se funde y descubre la propuesta). */
-  fase = signal<'preguntas' | 'revelando' | 'resultado'>('preguntas');
+  /** preguntas → resultado (los pixeles de la barra vuelan y arman el ícono del servicio). */
+  fase = signal<'preguntas' | 'resultado'>('preguntas');
+  private injector = inject(Injector);
+  private barra = viewChild<ElementRef<HTMLElement>>('barra');
+  private icono = viewChild<ElementRef<HTMLElement>>('icono');
+  private info = viewChild<ElementRef<HTMLElement>>('info');
+  private detalle = viewChild<ElementRef<HTMLElement>>('detalle');
   respuestas = signal<Record<string, string>>({});
   estado = signal<'listo' | 'enviando' | 'enviado' | 'error'>('listo');
 
   pregunta = computed(() => PREGUNTAS[this.paso()] ?? null);
   /** Las preguntas llenan la barra hasta el 85 %; el resultado la completa. */
   porcentaje = computed(() => Math.round((this.paso() / PREGUNTAS.length) * 100));
-  etiquetaPaso = computed(() => (this.pregunta() ? `Pregunta ${this.paso() + 1} de ${PREGUNTAS.length}` : this.fase() === 'revelando' ? 'Listo' : 'Tu propuesta'));
+  etiquetaPaso = computed(() => (this.pregunta() ? `Pregunta ${this.paso() + 1} de ${PREGUNTAS.length}` : 'Tu propuesta'));
   ranking = computed(() => recomendar(this.respuestas()));
   /** Opción que el visitante abrió en "Otras opciones"; si no, la de mayor afinidad. */
   seleccionada = signal<string | null>(null);
@@ -126,6 +141,9 @@ export class Calculator {
   partida = computed(() => PUNTO_DE_PARTIDA[this.respuestas()['hoy']] ?? '');
   /** La barra son 24 celdas tipo pixel; las encendidas siguen al avance. */
   celdas = computed(() => Array.from({ length: 24 }, (_, i) => i < Math.round((this.porcentaje() / 100) * 24)));
+  /** Ícono de pixeles del servicio activo: una clase por celda (`on` jade, `y` amarillo, vacía). */
+  celdasIcono = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing']).flatMap((fila) => [...fila].map((c) => (c === '#' ? 'on' : c === 'y' ? 'y' : ''))));
+  columnas = computed(() => (ICONOS[this.activo()] ?? ICONOS['landing'])[0].length);
   modulos = computed(() => PROPUESTA[this.activo()] ?? []);
 
   elegir(pregunta: string, opcion: string) {
@@ -136,12 +154,23 @@ export class Calculator {
   }
 
   private revelar() {
-    const sinAnimacion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.fase.set(sinAnimacion ? 'resultado' : 'revelando');
-    if (!sinAnimacion) setTimeout(() => this.fase.set('resultado'), 1100);
+    this.fase.set('resultado');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    afterNextRender(() => {
+      const [barra, icono, info, detalle] = [this.barra(), this.icono(), this.info(), this.detalle()];
+      if (barra && icono && info && detalle) {
+        this.animacion?.kill();
+        gsap.set(icono.nativeElement, { visibility: 'hidden' });
+        this.animacion = revelar(barra.nativeElement, icono.nativeElement, [info.nativeElement, detalle.nativeElement]);
+      }
+    }, { injector: this.injector });
   }
 
+  private animacion?: gsap.core.Timeline;
+
   atras() {
+    this.animacion?.kill();
+    this.animacion = undefined;
     this.fase.set('preguntas');
     this.seleccionada.set(null);
     this.paso.update((p) => Math.max(0, p - 1));
