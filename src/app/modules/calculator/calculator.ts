@@ -71,7 +71,7 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
           {{ abierto() ? 'Ver menos' : 'Ver más' }} <span class="flecha" [class.arriba]="abierto()">▾</span>
         </button>
         @if (montosTexto(); as ms) {
-         @for (k of [respuestas()['pago'] ?? 'unico']; track k) {
+         @for (k of [respuestas()['pago'] || 'unico']; track k) {
           <div class="cambio">
           @for (m of ms; track m.etiqueta) {
             <p class="rango" [class.chico]="ms.length > 1">{{ m.valor }} <small>{{ m.etiqueta }}</small></p>

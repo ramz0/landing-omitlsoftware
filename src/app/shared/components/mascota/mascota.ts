@@ -22,7 +22,7 @@ export type Pose = 'saluda' | 'senala' | 'piensa' | 'celebra';
 @Component({
   selector: 'app-mascota',
   template: `
-    <div class="mascota" #caja>
+    <div class="mascota">
       <div class="confeti" #confeti aria-hidden="true"></div>
       <div class="pj" #pj>
         @for (p of cuadros; track p.id) {
