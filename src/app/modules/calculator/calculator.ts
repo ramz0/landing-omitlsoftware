@@ -137,8 +137,7 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, REACCION_PAGO, PREGUNTAS, PROPUESTA, 
               <p class="error">No se pudo enviar. Intenta de nuevo o escríbenos a contacto&#64;omitlsoftware.com.mx.</p>
             }
           </form>
-          <p class="ayuda">¿Prefieres escribirnos? Elige el canal que te quede mejor.</p>
-          <app-canales [mensaje]="mensajeContacto()" asunto="Mi cotización en omitl software" />
+                    <app-canales [mensaje]="mensajeContacto()" asunto="Mi cotización en omitl software" />
           <button type="button" class="atras" (click)="atras()">← Cambiar respuestas</button>
         }
         </div>

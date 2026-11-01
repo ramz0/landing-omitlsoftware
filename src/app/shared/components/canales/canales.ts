@@ -11,18 +11,15 @@ import { Icono } from '@shared/components/icono/icono';
     <div class="canales" [class.iconos]="modo() === 'iconos'">
       @if (c.whatsapp) {
         <a class="canal wa" [href]="wa()" target="_blank" rel="noopener noreferrer" aria-label="Escríbenos por WhatsApp">
-          <app-icono nombre="whatsapp" />
-          <span><b>WhatsApp</b><small>Escríbenos, te respondemos por ahí</small></span>
+          <app-icono nombre="whatsapp" /><span>Chatea por WhatsApp</span>
         </a>
       }
       <a class="canal" [href]="correo()" aria-label="Escríbenos por correo">
-        <app-icono nombre="correo" />
-        <span><b>Correo</b><small>{{ c.email }}</small></span>
+        <app-icono nombre="correo" /><span>{{ c.email }}</span>
       </a>
       @for (r of redes; track r.nombre) {
         <a class="canal" [href]="r.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="r.nombre">
-          <app-icono [nombre]="r.icono" />
-          <span><b>{{ r.nombre }}</b><small>Síguenos y escríbenos por mensaje</small></span>
+          <app-icono [nombre]="r.icono" /><span>{{ r.nombre }}</span>
         </a>
       }
     </div>

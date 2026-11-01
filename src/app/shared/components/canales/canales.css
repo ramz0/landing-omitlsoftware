@@ -1,15 +1,12 @@
-.canales { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0.8rem; margin: 1.5rem 0; }
-.canal { display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1rem; border: 1px solid var(--stone); border-top: 3px solid var(--jade); border-radius: 12px; background: #fff; color: var(--night); text-decoration: none; transition: transform 0.15s, box-shadow 0.15s, border-top-color 0.15s; }
-.canal:hover, .canal:focus-visible { transform: translateY(-3px); box-shadow: 0 8px 18px -10px var(--night); border-top-color: var(--yellow); }
-.canal app-icono { font-size: 1.5rem; color: var(--jade); }
-.canal span { display: grid; min-width: 0; }
-.canal b { font-size: 1rem; }
-.canal small { font-size: 0.82rem; line-height: 1.3; color: color-mix(in srgb, var(--night) 65%, transparent); overflow-wrap: anywhere; }
+.canales { display: flex; flex-wrap: wrap; gap: 0.7rem; margin: 1.2rem 0; }
+.canal { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.65rem 1.1rem; border: 1px solid var(--stone); border-radius: 999px; background: #fff; color: var(--night); font-weight: 600; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; }
+.canal:hover, .canal:focus-visible { transform: translateY(-2px); box-shadow: 0 6px 14px -8px var(--night); background: color-mix(in srgb, var(--yellow) 25%, #fff); }
+.canal app-icono { font-size: 1.3rem; color: var(--jade); }
+.canal span { overflow-wrap: anywhere; }
 /* WhatsApp es el canal principal: amarillo de la marca, con borde y sombra dura como el globo de la mascota. */
-.wa { background: var(--yellow); border: 2px solid var(--night); border-radius: 12px; box-shadow: 3px 3px 0 var(--night); }
+.wa { background: var(--yellow); border: 2px solid var(--night); border-radius: 999px; box-shadow: 3px 3px 0 var(--night); font-size: 1.05rem; }
 .wa app-icono { color: var(--night); }
-.wa small { color: var(--night); }
-.wa:hover, .wa:focus-visible { box-shadow: 5px 5px 0 var(--night); transform: translate(-2px, -2px); border-top-color: var(--night); }
+.wa:hover, .wa:focus-visible { box-shadow: 5px 5px 0 var(--night); transform: translate(-2px, -2px); background: var(--yellow); }
 /* Footer: solo íconos redondos, sin texto. */
 .iconos { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.9rem 0 0; }
 .iconos .canal { padding: 0.55rem; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--lime) 35%, transparent); background: none; box-shadow: none; }

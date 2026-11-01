@@ -17,6 +17,7 @@ import gsap from 'gsap';
 import { EquipoService } from '@core/services/equipo.service';
 import { ServiciosService } from '@core/services/servicios.service';
 import { ProyectosService } from '@core/services/proyectos.service';
+import { Mascota } from '@shared/components/mascota/mascota';
 import { Canales } from '@shared/components/canales/canales';
 import { FormContacto } from '@shared/components/form-contacto/form-contacto';
 import { Boton } from '@shared/components/boton/boton';
@@ -30,7 +31,7 @@ import { ProyectoCard } from '@shared/components/proyecto-card/proyecto-card';
 
 @Component({
   selector: 'app-inicio',
-  imports: [RouterLink, Globo, LineasVelocidad, ProyectoCard, PersonaCard, Escritorio, StackMovil, Boton, NavNodos, FormContacto, Canales],
+  imports: [RouterLink, Globo, LineasVelocidad, ProyectoCard, PersonaCard, Escritorio, StackMovil, Boton, NavNodos, FormContacto, Canales, Mascota],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
