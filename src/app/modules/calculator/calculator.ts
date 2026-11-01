@@ -9,7 +9,7 @@ import gsap from 'gsap';
 import { entradaPregunta, revelar, salidaPregunta } from './calculator.animacion';
 import { ICONOS } from './calculator.iconos';
 import { ICONO_OPCION, TRAZOS } from './calculator.iconos-opcion';
-import { DESCRIPCION, EXTRAS, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
+import { DESCRIPCION, FORMAS_PAGO, EXTRAS, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cotizarPago, recomendar } from './calculator.config';
 
 /** /calculator: cuestionario corto con barra de progreso → rango de precio y propuesta → lead a POST /api/leads. */
 @Component({
@@ -74,6 +74,14 @@ import { DESCRIPCION, EXTRAS, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTIDA, RAZON, cot
             <p class="rango" [class.chico]="ms.length > 1">{{ m.valor }} <small>{{ m.etiqueta }}</small></p>
           }
           <p class="nota">{{ notaPago() }}</p>
+          <div class="formas">
+            <p class="formas-t">{{ textoPago() }}</p>
+            <div class="formas-b">
+              @for (f of formas(); track f.id) {
+                <button type="button" class="forma" (click)="cambiarPago(f.id)">{{ f.corto }}</button>
+              }
+            </div>
+          </div>
         } @else {
           <p class="rango chico">Lo cotizamos contigo en una llamada</p>
           <p class="nota">Este tipo de proyecto depende de lo que necesites; no queremos darte un número al aire.</p>
@@ -162,6 +170,16 @@ export class Calculator {
     if (pago === 'mixto') return base + 'Un pago inicial menor y una mensualidad que incluye mantenimiento y mejoras. Las condiciones las confirmamos contigo en una llamada.';
     return base + 'El precio final lo confirmamos contigo en una llamada.';
   });
+  /** Otras formas de pago a mostrar en el resultado (la elegida no aparece). */
+  formas = computed(() => {
+    const actual = this.respuestas()['pago'] ?? 'unico';
+    return FORMAS_PAGO.filter((f) => f.id !== actual);
+  });
+  textoPago = computed(() => (this.respuestas()['pago'] ?? 'unico') === 'unico' ? '¿No te convence el pago único? Mira cómo se vería en mensualidades:' : '¿Prefieres otra forma de pago? Prueba:');
+  /** Cambia el pago desde el resultado; queda en las respuestas, así la propuesta enviada lo lleva. */
+  cambiarPago(id: string) {
+    this.respuestas.update((r) => ({ ...r, pago: id }));
+  }
   /** "Ver qué incluye" desplegado; se cierra al cambiar de opción o de respuestas. */
   abierto = signal(false);
   otras = computed(() =>

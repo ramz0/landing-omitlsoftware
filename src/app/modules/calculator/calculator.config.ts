@@ -248,3 +248,10 @@ export function recomendar(respuestas: Record<string, string>): { id: string; pc
   for (const f of [...filas].sort((a, b) => (b.exacto % 1) - (a.exacto % 1))) if (falta-- > 0) f.pct++;
   return filas.map(({ id, pct }) => ({ id, pct })).sort((a, b) => b.pct - a.pct);
 }
+
+/** Formas de pago que se pueden probar desde el resultado, con texto corto para el botón. */
+export const FORMAS_PAGO = [
+  { id: 'unico', corto: 'Un solo pago' },
+  { id: 'mixto', corto: 'Inicial + mensualidad menor' },
+  { id: 'mensual', corto: 'Solo mensualidad' },
+];
