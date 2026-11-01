@@ -30,7 +30,7 @@ h2 { font-size: 1.1rem; margin: 1.8rem 0 0.6rem; color: var(--night); }
 .rango { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 700; color: var(--jade); margin: 0; }
 .rango.chico { font-size: 1.4rem; }
 .nota { font-size: 0.85rem; margin: 0.3rem 0 0; color: color-mix(in srgb, var(--night) 60%, transparent); }
-.propuesta { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.3rem; }
+.propuesta { margin: 0; padding: 0; list-style: none; counter-reset: n; display: grid; gap: 0.3rem; }
 form { display: grid; gap: 0.75rem; max-width: 460px; }
 input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12px; font: inherit; background: #fff; }
 .enviar { padding: 0.8rem 1.4rem; border: 0; border-radius: 999px; background: var(--yellow); color: var(--night); font: inherit; font-weight: 600; cursor: pointer; }
@@ -62,12 +62,25 @@ input { padding: 0.75rem 1rem; border: 1px solid var(--stone); border-radius: 12
 .ayuda { margin: -0.6rem 0 1.2rem; font-size: 0.95rem; color: color-mix(in srgb, var(--night) 65%, transparent); }
 
 .extras-t { margin: 0.4rem 0 0.3rem; font-size: 0.85rem; font-weight: 600; color: var(--jade); }
-.extras { margin: 0 0 0.8rem; padding: 0; list-style: none; display: grid; gap: 0.25rem; }
-.extras li { padding-left: 1.2rem; position: relative; }
-.extras li::before { content: '+'; position: absolute; left: 0; font-weight: 700; color: var(--yellow); -webkit-text-stroke: 0.5px var(--night); }
 
 .formas { margin-top: 1rem; }
 .formas-t { margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 600; }
 .formas-b { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .forma { padding: 0.45rem 0.9rem; border: 1px solid var(--jade); border-radius: 999px; background: #fff; font: inherit; font-size: 0.9rem; font-weight: 600; color: var(--jade); cursor: pointer; transition: background 0.15s, color 0.15s; }
 .forma:hover { background: var(--jade); color: #fff; }
+
+.cambio { animation: cambio 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes cambio { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .cambio { animation: none; } }
+
+/* Listas numeradas "01, 02…" con subrayado amarillo de marcatextos a mano: cada trazo es distinto, a propósito. */
+.extras { margin: 0 0 0.8rem; padding: 0; list-style: none; counter-reset: n; display: grid; gap: 0.25rem; }
+.propuesta li, .extras li { position: relative; padding-left: 2.4rem; counter-increment: n; }
+.propuesta li::before, .extras li::before {
+  content: counter(n, decimal-leading-zero); position: absolute; left: 0; top: 0; padding: 0 0.15rem;
+  font-weight: 800; font-size: 1.05rem; line-height: 1.5; color: var(--jade); font-variant-numeric: tabular-nums;
+  background: var(--trazo) 0 88% / 100% 0.55em no-repeat;
+}
+li:nth-child(3n + 1) { --trazo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8' preserveAspectRatio='none'%3E%3Cpath d='M1 5C8 2 14 7 22 4S34 3 39 5.5' fill='none' stroke='%23f3c649' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+li:nth-child(3n + 2) { --trazo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8' preserveAspectRatio='none'%3E%3Cpath d='M2 4Q10 7 20 4T38 6' fill='none' stroke='%23f3c649' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M5 6.5Q18 5 30 7' fill='none' stroke='%23f3c649' stroke-width='1.5' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E"); }
+li:nth-child(3n) { --trazo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 8' preserveAspectRatio='none'%3E%3Cpath d='M1 6C10 3 18 6 26 3.5S36 6 39 4' fill='none' stroke='%23f3c649' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E"); }

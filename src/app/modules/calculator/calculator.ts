@@ -55,25 +55,29 @@ import { DESCRIPCION, FORMAS_PAGO, EXTRAS, PREGUNTAS, PROPUESTA, PUNTO_DE_PARTID
         <h1>{{ servicio()?.nombre }}</h1>
         <p class="descripcion">{{ descripcion() }}</p>
         <p class="partida">Partimos de: <b>{{ partida() }}</b>.</p>
-        <div class="incluye" [class.abierto]="abierto()" [style.--alto]="modulos().length * 2.1 + 'rem'">
+        <div class="incluye" [class.abierto]="abierto()" [style.--alto]="(modulos().length + extras().length * 1.3) * 2.1 + (extras().length ? 3 : 0) + 'rem'">
           <ul class="propuesta">
             @for (m of modulos(); track m) { <li>{{ m }}</li> }
           </ul>
+          @if (extras().length) {
+            <p class="extras-t">Extras para ti, incluidos en el precio</p>
+            <ul class="extras">
+              @for (e of extras(); track e) { <li>{{ e }}</li> }
+            </ul>
+          }
         </div>
         <button type="button" class="vermas" [attr.aria-expanded]="abierto()" (click)="abierto.set(!abierto())">
           {{ abierto() ? 'Ver menos' : 'Ver más' }} <span class="flecha" [class.arriba]="abierto()">▾</span>
         </button>
-        @if (extras().length) {
-          <p class="extras-t">Extras para ti, incluidos en el precio</p>
-          <ul class="extras">
-            @for (e of extras(); track e) { <li>{{ e }}</li> }
-          </ul>
-        }
         @if (montosTexto(); as ms) {
+         @for (k of [respuestas()['pago'] ?? 'unico']; track k) {
+          <div class="cambio">
           @for (m of ms; track m.etiqueta) {
             <p class="rango" [class.chico]="ms.length > 1">{{ m.valor }} <small>{{ m.etiqueta }}</small></p>
           }
           <p class="nota">{{ notaPago() }}</p>
+          </div>
+         }
           <div class="formas">
             <p class="formas-t">{{ textoPago() }}</p>
             <div class="formas-b">
