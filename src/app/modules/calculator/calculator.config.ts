@@ -13,7 +13,7 @@ export interface Opcion {
 }
 
 export interface Pregunta {
-  id: 'objetivo' | 'hoy' | 'tamano' | 'urgencia' | 'marca';
+  id: 'objetivo' | 'hoy' | 'tamano' | 'gestion' | 'movilidad' | 'urgencia' | 'marca';
   titulo: string;
   opciones: Opcion[];
 }
@@ -49,6 +49,27 @@ export const PREGUNTAS: Pregunta[] = [
       { id: 'chico', texto: 'De 1 a 5 personas' },
       { id: 'mediano', texto: 'De 6 a 20 personas', factor: 1.25 },
       { id: 'grande', texto: 'Más de 20 personas', factor: 1.6 },
+    ],
+  },
+  {
+    id: 'gestion',
+    titulo: '¿Qué es lo más difícil de gestionar hoy?',
+    opciones: [
+      { id: 'pedidos', texto: 'Pedidos, citas o inventario' },
+      { id: 'cobros', texto: 'Cobros y corte de caja' },
+      { id: 'seguimiento', texto: 'Dar seguimiento a clientes o prospectos' },
+      { id: 'equipo', texto: 'Coordinar a mi equipo' },
+      { id: 'visibilidad', texto: 'Que me encuentren y me contacten' },
+      { id: 'nada', texto: 'Nada difícil por ahora' },
+    ],
+  },
+  {
+    id: 'movilidad',
+    titulo: '¿Alguien necesita usarlo desde el celular o fuera de la oficina?',
+    opciones: [
+      { id: 'equipo', texto: 'Mi equipo, en ruta, en campo o de visita' },
+      { id: 'clientes', texto: 'Mis clientes: pedir, reservar o seguir su pedido' },
+      { id: 'no', texto: 'No, desde la computadora está bien' },
     ],
   },
   {
@@ -142,6 +163,17 @@ const AFINIDAD: Record<string, Record<string, Record<string, number>>> = {
     chico: { landing: 1 },
     mediano: { software: 1, pos: 1 },
     grande: { software: 3, llamadas: 1 },
+  },
+  gestion: {
+    pedidos: { software: 3, pos: 2, tienda: 1 },
+    cobros: { pos: 4, software: 1 },
+    seguimiento: { llamadas: 3, software: 2 },
+    equipo: { software: 3, movil: 2 },
+    visibilidad: { landing: 3, tienda: 1 },
+  },
+  movilidad: {
+    equipo: { movil: 4, software: 1 },
+    clientes: { movil: 3, tienda: 2 },
   },
   urgencia: { urgente: { landing: 1 } },
   marca: { no: { landing: 1 } },
